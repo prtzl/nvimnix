@@ -211,8 +211,25 @@ require('lspconfig.ui.windows').default_options.border = 'single'
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
+local function safe_lsp_setup(server, config)
+    vim.api.nvim_create_autocmd("FileType", {
+        pattern = table.concat(config.filetypes or {}, ","),
+        callback = function()
+            if vim.fn.executable(server) == 1 then
+                if not vim.lsp.get_active_clients({ name = server })[1] then
+                    lspconfig[server].setup(config)
+                end
+            else
+                vim.schedule(function()
+                    vim.notify("LSP: " .. server .. " not found, skipping...", vim.log.levels.WARN, { title = "LSP" })
+                end)
+            end
+        end,
+    })
+end
+
 -- C/C++ LSP
-require 'lspconfig'.clangd.setup {
+safe_lsp_setup('clangd', {
     handlers = handlers,
     capabilities = capabilities,
     cmd = {
@@ -225,27 +242,27 @@ require 'lspconfig'.clangd.setup {
         '--header-insertion-decorators',
     },
     filetypes = { "c", "cpp", "h", "hpp" },
-}
+})
 
 -- Nix LSP
-require 'lspconfig'.nil_ls.setup {
+safe_lsp_setup(nil_ls, {
     capabilities = capabilities,
-}
+})
 
 -- latex lsp
-require 'lspconfig'.texlab.setup {
+safe_lsp_setup(texlab, {
     capabilities = capabilities,
-}
+})
 
 -- Python LSP
-require 'lspconfig'.pylsp.setup {
+safe_lsp_setup(pylsp, {
     capabilities = capabilities,
-}
+})
 
 -- lua LSP
-require 'lspconfig'.lua_ls.setup {
+safe_lsp_setup(lua_ls, {
     capabilities = capabilities,
-}
+})
 
 -- lsp signature - function signature
 require "lsp_signature".setup({
