@@ -5,9 +5,7 @@
     nixpkgs.url = "nixpkgs/ba487dbc9d04e0634c64e3b1f0d25839a0a68246";
   };
 
-  outputs = {
-    nixpkgs, ...
-  }:
+  outputs = { nixpkgs, ... }:
     let
       # I only use nixos so I don't give 2 hoots about this now.
       system = "x86_64-linux";
