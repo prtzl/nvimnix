@@ -211,25 +211,9 @@ require('lspconfig.ui.windows').default_options.border = 'single'
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
-local function safe_lsp_setup(server, config)
-    vim.api.nvim_create_autocmd("FileType", {
-        pattern = table.concat(config.filetypes or {}, ","),
-        callback = function()
-            if vim.fn.executable(server) == 1 then
-                if not vim.lsp.get_active_clients({ name = server })[1] then
-                    lspconfig[server].setup(config)
-                end
-            else
-                vim.schedule(function()
-                    vim.notify("LSP: " .. server .. " not found, skipping...", vim.log.levels.WARN, { title = "LSP" })
-                end)
-            end
-        end,
-    })
-end
-
 -- C/C++ LSP
-safe_lsp_setup('clangd', {
+require "lspconfig".clangd.setup({
+    autostart = true,
     handlers = handlers,
     capabilities = capabilities,
     cmd = {
@@ -245,22 +229,35 @@ safe_lsp_setup('clangd', {
 })
 
 -- Nix LSP
-safe_lsp_setup(nil_ls, {
+require "lspconfig".nil_ls.setup({
+    autostart = true,
     capabilities = capabilities,
+    filetypes = { 'nix' },
+    settings = {
+        ['nil'] = {
+            formatting = {
+                command = { "nixfmt" },
+            }
+        }
+
+    }
 })
 
 -- latex lsp
-safe_lsp_setup(texlab, {
+require "lspconfig".texlab.setup({
+    autostart = true,
     capabilities = capabilities,
 })
 
 -- Python LSP
-safe_lsp_setup(pylsp, {
+require "lspconfig".pylsp.setup({
+    autostart = true,
     capabilities = capabilities,
 })
 
 -- lua LSP
-safe_lsp_setup(lua_ls, {
+require "lspconfig".lua_ls.setup({
+    autostart = true,
     capabilities = capabilities,
 })
 
