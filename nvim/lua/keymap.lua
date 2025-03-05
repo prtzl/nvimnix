@@ -74,6 +74,10 @@ map('i', '<f3>', '<cmd>lua vim.g.toggleSpell()<cr>', nil)
 map('n', '<f4>', '<cmd>lua vim.g.toggleFormat()<cr>', nil)
 map('i', '<f4>', '<cmd>lua vim.g.toggleFormat()<cr>', nil)
 
+-- Set key mapping to toggle LSP on or off
+map('n', '<f5>', '<cmd> lua vim.g.toggle_lsp()<cr>', nil)
+map('i', '<f5>', '<cmd> lua vim.g.toggle_lsp()<cr>', nil)
+
 -- Comments
 map('n', '<c-_>', 'gcc', { noremap = false })
 map('v', '<c-_>', 'gcc', { noremap = false })
