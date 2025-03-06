@@ -78,12 +78,13 @@ vim.g.cpp_member_variable_highlight = 1
 -- https://github.com/srid/emanote/issues/180
 vim.opt.backupcopy = 'yes'
 
+-- In my way nowdays, but let's leave it here
 -- Can't be bothered to port
-vim.cmd([[
-    " Print opened file in tmux bar
-    if exists('$TMUX')
-      let windowName = system("tmux display-message -p '#W'")
-      autocmd BufReadPost,FileReadPost,BufNewFile,BufEnter * call system("tmux rename-window 'nvim(" . expand("%:t") . ")'")
-      autocmd VimLeave * call system("tmux rename-window " . windowName)
-    endif
-]])
+-- vim.cmd([[
+--     " Print opened file in tmux bar
+--     if exists('$TMUX')
+--       let windowName = system("tmux display-message -p '#W'")
+--       autocmd BufReadPost,FileReadPost,BufNewFile,BufEnter * call system("tmux rename-window 'nvim(" . expand("%:t") . ")'")
+--       autocmd VimLeave * call system("tmux rename-window " . windowName)
+--     endif
+-- ]])
