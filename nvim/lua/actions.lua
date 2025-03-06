@@ -11,13 +11,6 @@ vim.api.nvim_create_autocmd('BufWritePre', {
     callback = formatToggle
 })
 
--- Reload file when it has changed
-vim.opt.autoread = true
-vim.api.nvim_create_autocmd({ 'VimEnter', 'FocusGained', 'BufEnter' }, {
-    group = vim.api.nvim_create_augroup('ReloadFileOnChange', {}),
-    command = 'checktime',
-})
-
 -- Current format state, enabled on start
 vim.g.formatToggle = true
 function vim.g.toggleFormat()
@@ -30,3 +23,10 @@ function vim.g.toggleFormat()
         print("Format enabled!")
     end
 end
+
+-- Reload file when it has changed
+vim.opt.autoread = true
+vim.api.nvim_create_autocmd({ 'VimEnter', 'FocusGained', 'BufEnter' }, {
+    group = vim.api.nvim_create_augroup('ReloadFileOnChange', {}),
+    command = 'checktime',
+})
