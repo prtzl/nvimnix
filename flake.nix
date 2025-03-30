@@ -1,9 +1,7 @@
 {
   description = "Standalone Neovim with plugins and custom configuration";
 
-  inputs = {
-    nixpkgs.url = "nixpkgs/ba487dbc9d04e0634c64e3b1f0d25839a0a68246";
-  };
+  inputs = { nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11"; };
 
   outputs = { nixpkgs, ... }:
     let
