@@ -1,11 +1,11 @@
 {
   description = "Standalone Neovim with plugins and custom configuration";
 
-  inputs = { nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11"; };
+  inputs = { nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable"; };
 
   outputs = { nixpkgs, ... }:
     let
-      # I only use nixos so I don't give 2 hoots about this now.
+      # I only use nixos on my PC so I don't give 2 hoots about this now.
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
 
@@ -23,8 +23,9 @@
         nvim-treesitter.withAllGrammars # syntax for everything
         vim-cpp-enhanced-highlight # better looking cpp highlighting
         markdown-preview-nvim # opens markdown preview in browser
-        telescope-nvim # Fuzzy search
-        telescope-frecency-nvim
+        telescope-nvim # Fuzzy search everything
+        telescope-fzf-native-nvim # Telescope plugin with native C fzf (faster search)
+        telescope-frecency-nvim # Telescope plugin for searching most used files
         lualine-nvim # status bar
         vim-gitbranch # get git info for status bar
         git-worktree-nvim # telescope extension for git worktree

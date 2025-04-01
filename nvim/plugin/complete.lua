@@ -259,6 +259,25 @@ require "lspconfig".pylsp.setup({
 require "lspconfig".lua_ls.setup({
     autostart = true,
     capabilities = capabilities,
+    settings = {
+        Lua = {
+            diagnostics = {
+                globals = { 'vim' }, -- Recognize 'vim' as a global variable
+            },
+            workspace = {
+                library = {
+                    vim.fn.stdpath("config") .. "/lua",  -- Only your config files
+                    vim.fn.stdpath("data") .. "/plugin", -- If using lazy.nvim, include its plugins
+                },
+                checkThirdParty = false,                 -- Prevents unnecessary warnings
+                maxPreload = 1000,                       -- Limits the number of preloaded files
+                preloadFileSize = 200,                   -- Limits the size of preloaded files (in KB)
+            },
+            telemetry = {
+                enable = false, -- Disable telemetry for extra speed
+            },
+        },
+    },
 })
 
 -- lsp signature - function signature
