@@ -43,6 +43,7 @@
         rainbow-delimiters-nvim
         alpha-nvim # greet dashboard
         indentLine # Show indentation levels
+        vim-obsession # Save sessions. Used by tmux-ressurect
 
         # LSP stuff
         cmp-buffer
