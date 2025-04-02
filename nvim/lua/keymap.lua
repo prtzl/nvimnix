@@ -1,93 +1,92 @@
 -- Keymaps
 local function map(mode, lhs, rhs, opts)
-    local options = { noremap = true, silent = true }
+    local options = { remap = false, silent = true }
     if opts ~= nil then
         options = vim.tbl_extend("force", options, opts)
-        vim.keymap.set(mode, lhs, rhs, options)
-    else
-        vim.keymap.set(mode, lhs, rhs)
     end
-    -- vim.api.nvim_set_keymap(mode, lhs, rhs, options)
+    vim.keymap.set(mode, lhs, rhs, options)
 end
 
 -- Window movement in insert mode
-map("i", "<c-w><left>", "<esc><right><c-w><left><ins>", nil)
-map("i", "<c-w><right>", "<esc><right><c-w><right><ins>", nil)
-map("i", "<c-w><up>", "<esc><right><c-w><up><ins>", nil)
-map("i", "<c-w><down>", "<esc><right><c-w><down><ins>", nil)
+map("i", "<C-w><LEFT>", "<ESC><right><c-w><left><ins>")
+map("i", "<C-w><RIGHT>", "<ESC><right><c-w><right><ins>")
+map("i", "<C-w><up>", "<ESC><RIGHT><c-w><up><ins>")
+map("i", "<C-w><down>", "<ESC><RIGHT><c-w><down><ins>")
 
-map("n", "<s-up>", ":move-2<cr>", nil)
-map("n", "<s-down>", ":move+1<cr>", nil)
-map("i", "<s-up>", "<esc>:move-2<cr><ins><right>", nil)
-map("i", "<s-down>", "<esc>:move+1<cr><ins><right>", nil)
+map("n", "<s-up>", ":move-2<CR>")
+map("n", "<s-down>", ":move+1<CR>")
+map("i", "<s-up>", "<ESC>:move-2<CR><ins><RIGHT>")
+map("i", "<s-down>", "<ESC>:move+1<CR><ins><RIGHT>")
+map("v", "<s-up>", ":move '<-2<CR>gv=gv")
+map("v", "<s-down>", ":move '>+1<CR>gv=gv")
 
 -- Resizing windows
-map("n", "<c-s-up>", ":resize +5<cr>", nil)
-map("n", "<c-s-down>", ":resize -5<cr>", nil)
-map("n", "<c-s-left>", ":vertical resize -5<cr>", nil)
-map("n", "<c-s-right>", ":vertical resize +5<cr>", nil)
+map("n", "<C-s-up>", ":resize +5<CR>")
+map("n", "<C-s-down>", ":resize -5<CR>")
+map("n", "<C-s-LEFT>", ":vertical resize -5<CR>")
+map("n", "<C-s-RIGHT>", ":vertical resize +5<CR>")
 
--- backspace delete
-map("!", "<c-bs>", "<c-w>", nil)
-map("!", "<c-h>", "<c-w>", nil)
+-- backSPACE delete
+map("!", "<C-bs>", "<c-w>")
+map("!", "<C-h>", "<c-w>")
 
 -- move to the end of line while in insert mode
-map("i", "<c-]>", "<esc>A", nil)
+map("i", "<C-]>", "<ESC>A")
 
 -- Move back and forth in buffers
--- Note so self: <c-[> is maped as if <Esc> is pressed - higher power control, abandon hope
-map("n", "[[", ":bnext<cr>", nil)
-map("n", "]]", ":bprev<cr>", nil)
+-- Note so self: <C-[> is maped as if <ESC> is pressed - higher power control, abandon hope
+map("n", "]]", ":bnext<CR>")
+map("n", "[[", ":bprev<CR>")
 
 -- LSP
-map("n", "gd", vim.lsp.buf.declaration, nil)
-map("n", "gD", vim.lsp.buf.definition, nil)
-map("n", "gh", vim.lsp.buf.hover, nil)
-map("n", "gi", vim.lsp.buf.implementation, nil)
-map("n", "gr", vim.lsp.buf.references, nil)
-map("n", "<f2>", vim.lsp.buf.rename, { silent = false })
-map("n", "<f8>", vim.lsp.buf.code_action, { silent = false })
+map("n", "gd", vim.lsp.buf.declaration)
+map("n", "gD", vim.lsp.buf.definition)
+map("n", "gh", vim.lsp.buf.hover)
+map("n", "gi", vim.lsp.buf.implementation)
+map("n", "gr", vim.lsp.buf.references)
+map("n", "<F2>", vim.lsp.buf.rename, { silent = false })
+map("n", "<F8>", vim.lsp.buf.code_action, { silent = false })
 
 -- Snippets - move between fields
-map("i", "<c-j>", "<cmd>lua require(luasnip).jump(1)<CR>", nil)
-map("s", "<c-j>", "<cmd>lua require(luasnip).jump(1)<CR>", nil)
-map("i", "<c-k>", "<cmd>lua require(luasnip).jump(-1)<CR>", nil)
-map("s", "<c-k>", "<cmd>lua require(luasnip).jump(-1)<CR>", nil)
+map("i", "<C-j>", "<cmd>lua require(luasnip).jump(1)<CR>")
+map("s", "<C-j>", "<cmd>lua require(luasnip).jump(1)<CR>")
+map("i", "<C-k>", "<cmd>lua require(luasnip).jump(-1)<CR>")
+map("s", "<C-k>", "<cmd>lua require(luasnip).jump(-1)<CR>")
 
 -- FZF
-map("n", "<c-p>", require("telescope.builtin").find_files, nil)
-map("n", "<c-a>", function()
+map("n", "<C-p>", require("telescope.builtin").find_files)
+map("n", "<C-a>", function()
     require("telescope.builtin").find_files { no_ignore = true, no_ignore_parent = true, hidden = true }
-end, nil)
-map("n", "<c-g>", require("telescope.builtin").live_grep, nil)
-map("n", "<c-b>", require("telescope.builtin").buffers, nil)
-map("n", "<c-f>", require("telescope.builtin").current_buffer_fuzzy_find, nil)
+end)
+map("n", "<C-g>", require("telescope.builtin").live_grep)
+map("n", "<C-b>", require("telescope.builtin").buffers)
+map("n", "<C-f>", require("telescope.builtin").current_buffer_fuzzy_find)
 
 -- Diagnostic
-map("n", "<space>e", vim.diagnostic.open_float, nil)
-map("n", "[d", vim.diagnostic.goto_prev, nil)
-map("n", "]d", vim.diagnostic.goto_next, nil)
-map("n", "<space>q", vim.diagnostic.setloclist, nil)
+map("n", "<SPACE>e", vim.diagnostic.open_float)
+map("n", "[d", vim.diagnostic.goto_prev)
+map("n", "]d", vim.diagnostic.goto_next)
+map("n", "<SPACE>q", vim.diagnostic.setloclist)
 
 -- Spell toggle
-map("n", "<f3>", function() vim.g.toggleSpell() end, nil)
-map("i", "<f3>", function() vim.g.toggleSpell() end, nil)
+map("n", "<F3>", function() vim.g.toggleSpell() end)
+map("i", "<F3>", function() vim.g.toggleSpell() end)
 
 -- Autoformat toggle
-map("n", "<f4>", function() vim.g.toggleFormat() end, nil)
-map("i", "<f4>", function() vim.g.toggleFormat() end, nil)
+map("n", "<F4>", function() vim.g.toggleFormat() end)
+map("i", "<F4>", function() vim.g.toggleFormat() end)
 
 -- Set key mapping to toggle LSP on or off
-map("n", "<f5>", function() vim.g.toggle_lsp() end, nil)
-map("i", "<f5>", function() vim.g.toggle_lsp() end, nil)
+map("n", "<F5>", function() vim.g.toggle_lsp() end)
+map("i", "<F5>", function() vim.g.toggle_lsp() end)
 
 -- Comments
-map("n", "<c-_>", "gcc", { noremap = false })
-map("v", "<c-_>", "gcc", { noremap = false })
-map("i", "<c-_>", "<esc>gcc<right>i", { noremap = false })
+map("n", "<C-_>", "gcc", { remap = true, })
+map("v", "<C-_>", "gcc", { remap = true, })
+map("i", "<C-_>", "<ESC>gcc<RIGHT>i", { remap = true, })
 
 -- Git - lazygit
-map("n", "<c-\\>", ":LazyGit<cr>", nil)
+map("n", "<C-\\>", ":LazyGit<CR>")
 
 -- nvim tree view
-map("n", "<c-t>", ":NvimTreeToggle<cr>", nil)
+map("n", "<C-t>", ":NvimTreeFindFile<CR>")
