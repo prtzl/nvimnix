@@ -9,6 +9,18 @@
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
 
+      commonPackages = with pkgs; [
+        git
+        bat
+        ripgrep
+        nil # nix lsp
+        texlab # latex lsp
+        python311Packages.python-lsp-server # python lsp
+        sumneko-lua-language-server # lua lsp
+        tree-sitter
+        lazygit
+      ];
+
       # Custom epics nvim support
       epics = pkgs.fetchFromGitHub {
         owner = "minijackson";
@@ -92,5 +104,41 @@
           '';
         };
       };
-    in { packages.${system}.default = myNeovim; };
+
+      # Very cowboy approach but it works
+      wrappedNeovim = pkgs.writeShellApplication {
+        name = "nvim";
+        runtimeInputs = commonPackages ++ [ myNeovim ];
+        text = ''
+          nvim "$@"
+        '';
+      };
+
+      module = { config, lib, pkgs, ... }:
+        let isNixOS = config ? environment;
+        in {
+          options.programs.nvimnix = {
+            enable = lib.mkEnableOption "Enable nvimnix (Neovim wrapper)";
+          };
+
+          # Conditionally add the package to home-manager or NixOS
+          # For NixOS, use systemPackages if it's not home-manager
+          config = lib.mkIf config.programs.nvimnix.enable (lib.mkMerge [
+            # (lib.mkIf isNixOS {
+            #   environment.systemPackages = [ wrappedNeovim ];
+            # })
+            (lib.mkIf (!isNixOS) { home.packages = [ wrappedNeovim ]; })
+            # (mkIf (config.programs.nvimnix.enable
+            #   && (hasAttr "home-manager" config)) {
+            #     home.packages = [ wrappedNeovim ];
+            #   })
+            # (mkIf (!config.programs.nvimnix.enable && !(home.packages)) {
+            #   environment.systemPackages = [ wrappedNeovim ];
+            # })
+          ]);
+        };
+    in {
+      packages.${system}.default = wrappedNeovim;
+      nixosModules.default = module;
+    };
 }
