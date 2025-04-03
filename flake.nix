@@ -15,7 +15,7 @@
         ripgrep
         nil # nix lsp
         texlab # latex lsp
-        python311Packages.python-lsp-server # python lsp
+        python312Packages.python-lsp-server # python lsp
         sumneko-lua-language-server # lua lsp
         tree-sitter
         lazygit
