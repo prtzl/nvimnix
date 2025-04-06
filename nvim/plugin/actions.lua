@@ -1,6 +1,6 @@
 -- Format the file before it is written
 local formatToggle = function()
-    local client = vim.lsp.get_active_clients({ bufnr = 0 })[1]
+    local client = vim.lsp.get_clients({ bufnr = 0 })[1]
     if vim.g.formatToggle and client ~= nil then
         vim.lsp.buf.format { async = false }
     end
