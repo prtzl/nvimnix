@@ -56,6 +56,7 @@
         alpha-nvim # greet dashboard
         indentLine # Show indentation levels
         vim-obsession # Save sessions. Used by tmux-ressurect
+        vim-visual-multi # Multiline select, so good
 
         # LSP stuff
         cmp-buffer
