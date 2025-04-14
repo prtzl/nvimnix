@@ -1,5 +1,6 @@
 -- base gui
 vim.opt.number = true
+vim.opt.relativenumber = true
 vim.opt.ruler = true
 vim.opt.showcmd = true
 vim.opt.showmode = true
