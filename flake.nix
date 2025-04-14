@@ -49,7 +49,7 @@
         nvim-autopairs # autopair braces
         nvim-tree-lua # file tree
         nvim-web-devicons # icons
-        base16-nvim # color themes
+        base16-nvim # color schemes
         comment-nvim # smart comments
         vim-latex-live-preview # preview latex pdf inside editor
         rainbow-delimiters-nvim
