@@ -16,7 +16,7 @@ vim.opt.cursorline = true
 -- System
 vim.opt.backup = false
 vim.opt.history = 1000
-vim.opt.scrolloff = 5
+vim.opt.scrolloff = 10
 vim.opt.sidescrolloff = 10
 
 -- Clipboard
