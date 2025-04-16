@@ -115,31 +115,28 @@
         '';
       };
 
-      module = { config, lib, pkgs, ... }:
-        let isNixOS = config ? environment;
-        in {
-          options.programs.nvimnix = {
-            enable = lib.mkEnableOption "Enable nvimnix (Neovim wrapper)";
-          };
-
-          # Conditionally add the package to home-manager or NixOS
-          # For NixOS, use systemPackages if it's not home-manager
-          config = lib.mkIf config.programs.nvimnix.enable (lib.mkMerge [
-            # (lib.mkIf isNixOS {
-            #   environment.systemPackages = [ wrappedNeovim ];
-            # })
-            (lib.mkIf (!isNixOS) { home.packages = [ wrappedNeovim ]; })
-            # (mkIf (config.programs.nvimnix.enable
-            #   && (hasAttr "home-manager" config)) {
-            #     home.packages = [ wrappedNeovim ];
-            #   })
-            # (mkIf (!config.programs.nvimnix.enable && !(home.packages)) {
-            #   environment.systemPackages = [ wrappedNeovim ];
-            # })
-          ]);
+      module_nixos = { config, lib, pkgs, ... }: {
+        options.programs.nvimnix = {
+          enable = lib.mkEnableOption "Enable nvimnix (Neovim wrapper)";
         };
+
+        config = lib.mkIf config.programs.nvimnix.enable {
+          environment.systemPackages = [ wrappedNeovim ];
+        };
+      };
+
+      module_home = { config, lib, pkgs, ... }: {
+        options.programs.nvimnix = {
+          enable = lib.mkEnableOption "Enable nvimnix (Neovim wrapper)";
+        };
+
+        config = lib.mkIf config.programs.nvimnix.enable {
+          home.packages = [ wrappedNeovim ];
+        };
+      };
     in {
       packages.${system}.default = wrappedNeovim;
-      nixosModules.default = module;
+      nixosModules.nixos = module_nixos;
+      nixosModules.home = module_home;
     };
 }
