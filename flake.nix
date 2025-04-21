@@ -115,28 +115,28 @@
         '';
       };
 
-      module_nixos = { config, lib, pkgs, ... }: {
-        options.programs.nvimnix = {
-          enable = lib.mkEnableOption "Enable nvimnix (Neovim wrapper)";
+      module = { config, lib, pkgs, systemArgs ? { isNixos = true; }
+        , homeArgs ? { isHome = true; }, ... }: {
+
+          options.programs.nvimnix = {
+            enable = lib.mkEnableOption "Enable nvimnix (Neovim wrapper)";
+            default = false;
+          };
+
+          config = lib.mkIf config.programs.nvimnix.enable (lib.mkMerge [
+            (if (systemArgs ? isSystem && systemArgs.isSystem) then {
+              environment.systemPackages = [ wrappedNeovim ];
+            } else
+              { })
+            (if (homeArgs ? isHome && homeArgs.isHome) then {
+              home.packages = [ wrappedNeovim ];
+            } else
+              { })
+          ]);
         };
 
-        config = lib.mkIf config.programs.nvimnix.enable {
-          environment.systemPackages = [ wrappedNeovim ];
-        };
-      };
-
-      module_home = { config, lib, pkgs, ... }: {
-        options.programs.nvimnix = {
-          enable = lib.mkEnableOption "Enable nvimnix (Neovim wrapper)";
-        };
-
-        config = lib.mkIf config.programs.nvimnix.enable {
-          home.packages = [ wrappedNeovim ];
-        };
-      };
     in {
       packages.${system}.default = wrappedNeovim;
-      nixosModules.nixos = module_nixos;
-      nixosModules.home = module_home;
+      nixosModules.default = module;
     };
 }
