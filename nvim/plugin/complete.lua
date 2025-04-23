@@ -5,6 +5,8 @@ local luasnip = require 'luasnip'
 require('luasnip/loaders/from_vscode').lazy_load()
 local lspkind = require 'lspkind'
 
+local unpack = unpack or table.unpack -- TODO: fix this since LUA lsp is new and shiny, but one shipped with nvim is not
+
 local has_words_before = function()
     local line, col = table.unpack(vim.api.nvim_win_get_cursor(0))
     return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
