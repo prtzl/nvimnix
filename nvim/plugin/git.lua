@@ -1,31 +1,3 @@
--- Define highlight groups for signs and their line/number highlights
-vim.api.nvim_set_hl(0, 'GitSignsAdd', { fg = '#5f9400', bold = true })
-vim.api.nvim_set_hl(0, 'GitSignsChange', { fg = '#e5c07b', bold = true })
-vim.api.nvim_set_hl(0, 'GitSignsDelete', { fg = '#be5046', bold = true })
-vim.api.nvim_set_hl(0, 'GitSignsAddNr', { fg = '#5f9400' })
-vim.api.nvim_set_hl(0, 'GitSignsChangeNr', { fg = '#e5c07b' })
-vim.api.nvim_set_hl(0, 'GitSignsDeleteNr', { fg = '#be5046' })
-vim.api.nvim_set_hl(0, 'GitSignsAddLn', { fg = '#5f9400', underline = true })
-vim.api.nvim_set_hl(0, 'GitSignsChangeLn', { fg = '#e5c07b', underline = true })
-vim.api.nvim_set_hl(0, 'GitSignsDeleteLn', { fg = '#be5046', underline = true })
-vim.api.nvim_set_hl(0, 'GitSignsChangedelete', { fg = '#e5c07b', italic = true })
-vim.api.nvim_set_hl(0, 'GitSignsChangedeleteNr', { fg = '#e5c07b' })
-vim.api.nvim_set_hl(0, 'GitSignsChangedeleteLn', { fg = '#e5c07b', underline = true })
-vim.api.nvim_set_hl(0, 'GitSignsTopdelete', { fg = '#be5046', bold = true })
-vim.api.nvim_set_hl(0, 'GitSignsTopdeleteLn', { fg = '#be5046', underline = true })
-
--- Link highlights to the proper groups (this is what fixes the warnings)
-vim.api.nvim_set_hl(0, 'GitSignsAddNr', { link = 'GitSignsAddNr' })
-vim.api.nvim_set_hl(0, 'GitSignsChangeNr', { link = 'GitSignsChangeNr' })
-vim.api.nvim_set_hl(0, 'GitSignsDeleteNr', { link = 'GitSignsDeleteNr' })
-vim.api.nvim_set_hl(0, 'GitSignsAddLn', { link = 'GitSignsAddLn' })
-vim.api.nvim_set_hl(0, 'GitSignsChangeLn', { link = 'GitSignsChangeLn' })
-vim.api.nvim_set_hl(0, 'GitSignsDeleteLn', { link = 'GitSignsDeleteLn' })
-vim.api.nvim_set_hl(0, 'GitSignsChangedeleteLn', { link = 'GitSignsChangedeleteLn' })
-vim.api.nvim_set_hl(0, 'GitSignsChangedeleteNr', { link = 'GitSignsChangedeleteNr' })
-vim.api.nvim_set_hl(0, 'GitSignsTopdeleteLn', { link = 'GitSignsTopdeleteLn' })
-vim.api.nvim_set_hl(0, 'GitSignsTopdeleteNr', { link = 'GitSignsTopdeleteNr' })
-
 -- Configure gitsigns with updated highlight references
 require 'gitsigns'.setup {
     signs = {
@@ -39,7 +11,7 @@ require 'gitsigns'.setup {
     linehl = false,
     word_diff = false,
     watch_gitdir = {
-        interval = 1000,     -- Check for git changes every 1 second
+        -- interval =1000,     -- Check for git changes every 1 second
         follow_files = true, -- Follow files in git submodules
     },
     on_attach = function(bufnr)
