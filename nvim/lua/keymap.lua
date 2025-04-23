@@ -61,7 +61,60 @@ end)
 map("n", "<C-g>", require("telescope.builtin").live_grep)
 map("n", "<C-b>", require("telescope.builtin").buffers)
 map("n", "<C-f>", require("telescope.builtin").current_buffer_fuzzy_find)
-map("n", "<C-s>", function() require("telescope.builtin").live_grep({ default_text = vim.fn.expand("<cword>") }) end)
+
+-- Custom telescope searches
+-- grep for word under cursor
+map("n", "<leader>s",
+    function()
+        local word = vim.fn.expand("<cword>");
+        require("telescope.builtin").live_grep({ default_text = word, })
+    end)
+-- Grep function call/declare/signature/assign fptr "<cword>(...)" for word under cursor
+-- mostly just for C/C++ since lua can have functions as part of of a struct, like vim.g.myFunction = function()
+-- BUT, lua LSP works and is nice. So use go-to-definition hah
+map("n", "<leader>f",
+    function()
+        local word = vim.fn.expand("<cword>");
+        -- INFO: this pattern also finds two-line function def/dec where return type is on separate line
+        -- INFO: It can exclude them by modifying third or parameter to search for commented lines without anything in front, maybe
+        local pattern = [[(\s?,?\w\s*=\s*|^\s+|.*[/\-#*]{1,2}\s*)]] .. word .. [[[\(.*\)]?]];
+        require("telescope.builtin").live_grep({
+            default_text = pattern,
+        })
+    end)
+-- Grep function definition/declaration with two line type "[\w+\s+] <cword>(.*)" as well for the word under cursor
+map("n", "<leader>F",
+    function()
+        local word = vim.fn.expand("<cword>");
+        -- INFO: this pattern skips two-line function def/dec where return type is on separate line
+        -- INFO: It can be made to include them by chaning the last + to *. This then also finds some commented function calls
+        -- since they look like commented two line (line commented) function declarations/definitions
+        local pattern = [[(^(\s*)[/\-#*]{1,2}\s*|^)(\w+\s+)+]] .. word .. [[\(.*\)\s*;*({?(.*)*}?)*]];
+        require("telescope.builtin").live_grep({
+            default_text = pattern,
+            additional_args = function()
+                return { "--pcre2" }
+            end,
+        })
+    end)
+-- Grep MACRO use signature "<#define/#if/...> <cword>" for word under cursor
+map("n", "<leader>m",
+    function()
+        local word = vim.fn.expand("<cword>");
+        local pattern = [[#\w+\s]] .. word;
+        require("telescope.builtin").live_grep({
+            default_text = pattern,
+        })
+    end)
+-- Grep MACRO definition "#define <cword>" for word under cursor
+map("n", "<leader>M",
+    function()
+        local word = vim.fn.expand("<cword>");
+        local pattern = "#define " .. word;
+        require("telescope.builtin").live_grep({
+            default_text = pattern,
+        })
+    end)
 
 -- Diagnostic
 map("n", "<SPACE>e", vim.diagnostic.open_float)
