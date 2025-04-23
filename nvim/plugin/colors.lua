@@ -9,7 +9,7 @@ local color_bg = require('base16-colorscheme').colors.base00
 
 -- Overrides
 -- Transparent complete
-vim.api.nvim_set_hl(0, "CmpItemAbbr", { cternbg = None, bg = None })
+vim.api.nvim_set_hl(0, "CmpItemAbbr", { cternbg = nil, bg = nil })
 
 -- More visible match and line highlights in Telescope preview
 vim.api.nvim_set_hl(0, "TelescopePreviewMatch", { bg = "#ffaf5f", fg = "#000000", bold = true, })
