@@ -212,21 +212,32 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 -- C/C++ LSP
-require "lspconfig".clangd.setup({
-    autostart = true,
-    handlers = handlers,
-    capabilities = capabilities,
-    cmd = {
-        'clangd',
-        '--background-index',
-        '--clang-tidy',
-        '--compile-commands-dir=build',
-        '--header-insertion=never',
-        '--function-arg-placeholders',
-        '--header-insertion-decorators',
-    },
-    filetypes = { "c", "cpp", "h", "hpp" },
-})
+-- require "lspconfig".ccls.setup({
+--     init_options = {
+--         cache = {
+--             directory = ".ccls-cache";
+--         };
+--     },
+--     autostart = true,
+--     handlers = handlers,
+--     capabilities = capabilities,
+--     filetypes = { "c", "cpp", "h", "hpp" },
+-- })
+-- require "lspconfig".clangd.setup({
+--     autostart = true,
+--     handlers = handlers,
+--     capabilities = capabilities,
+--     cmd = {
+--         'clangd',
+--         '--background-index',
+--         '--clang-tidy',
+--         '--compile-commands-dir=build',
+--         '--header-insertion=never',
+--         '--function-arg-placeholders',
+--         '--header-insertion-decorators',
+--     },
+--     filetypes = { "c", "cpp", "h", "hpp" },
+-- })
 
 -- Nix LSP
 require "lspconfig".nil_ls.setup({
