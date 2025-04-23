@@ -96,6 +96,7 @@ function vim.g.toggle_lsp()
     if lsp_enabled then                 -- If LSP is currently enabled, disable it
         client_configs = {}             -- Clear client configurations
         attached_buffers_by_client = {} -- Clear attached buffers
+        vim.g.toggleFormat(false)
 
         -- Loop through all active LSP clients
         for _, client in ipairs(vim.lsp.get_clients()) do
@@ -113,6 +114,7 @@ function vim.g.toggle_lsp()
         print("LSPs Disabled")
     else -- If LSP is currently disabled, enable it
         local new_ids = {}
+        vim.g.toggleFormat(true)
 
         -- Reinitialize clients with previous configurations
         for client_id, buffers in pairs(attached_buffers_by_client) do

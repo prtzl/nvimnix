@@ -74,8 +74,8 @@ map("n", "<F3>", function() vim.g.toggleSpell() end)
 map("i", "<F3>", function() vim.g.toggleSpell() end)
 
 -- Autoformat toggle
-map("n", "<F4>", function() vim.g.toggleFormat() end)
-map("i", "<F4>", function() vim.g.toggleFormat() end)
+map("n", "<F4>", function() vim.g.toggleFormat(nil) end)
+map("i", "<F4>", function() vim.g.toggleFormat(nil) end)
 
 -- Set key mapping to toggle LSP on or off
 map("n", "<F5>", function() vim.g.toggle_lsp() end)
@@ -91,3 +91,8 @@ map("n", "<C-\\>", ":LazyGit<CR>")
 
 -- nvim tree view
 map("n", "<C-t>", ":NvimTreeFindFile<CR>")
+
+-- nvim diagnostics
+map("n", "<space>e", vim.diagnostic.open_float)
+map("n", "]d", vim.diagnostic.goto_next)
+map("n", "[d", vim.diagnostic.goto_prev)

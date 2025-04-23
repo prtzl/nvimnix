@@ -7,7 +7,11 @@ local signs = {
 }
 
 for _, sign in ipairs(signs) do
-    vim.fn.sign_define(sign.name, { texthl = sign.name, text = sign.text, numhl = '' })
+    vim.fn.sign_define(sign.name, {
+        text = sign.text,
+        texthl = sign.name,
+        numhl = ''
+    })
 end
 
 vim.diagnostic.config {
@@ -28,7 +32,4 @@ vim.diagnostic.config {
         scope = 'line',
     },
 }
-local opts = { noremap = true, silent = true }
-vim.keymap.set('n', '<space>e', vim.diagnostic.open_float, opts)
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
+

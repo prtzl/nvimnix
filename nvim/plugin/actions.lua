@@ -1,7 +1,7 @@
 -- Format the file before it is written
 local formatToggle = function()
     local client = vim.lsp.get_clients({ bufnr = 0 })[1]
-    if vim.g.formatToggle and client ~= nil then
+    if formatToggleState and client ~= nil then
         vim.lsp.buf.format { async = false }
     end
 end
@@ -12,15 +12,15 @@ vim.api.nvim_create_autocmd('BufWritePre', {
 })
 
 -- Current format state, enabled on start
-vim.g.formatToggle = true
-function vim.g.toggleFormat()
-    local tog = vim.g.formatToggle
-    if tog then
-        vim.g.formatToggle = false
-        print("Format disabled!")
-    else
-        vim.g.formatToggle = true
+local formatToggleState = true
+function vim.g.toggleFormat(state)
+    print("Input state, current state: ", state, formatToggleState)
+    if ((state ~= nil) and state) or (not formatToggleState) then
+        formatToggleState = true
         print("Format enabled!")
+    else
+        formatToggleState = false
+        print("Format disabled!")
     end
 end
 
