@@ -61,6 +61,7 @@ end)
 map("n", "<C-g>", require("telescope.builtin").live_grep)
 map("n", "<C-b>", require("telescope.builtin").buffers)
 map("n", "<C-f>", require("telescope.builtin").current_buffer_fuzzy_find)
+map("n", "<C-s>", function() require("telescope.builtin").live_grep({ default_text = vim.fn.expand("<cword>") }) end)
 
 -- Diagnostic
 map("n", "<SPACE>e", vim.diagnostic.open_float)
