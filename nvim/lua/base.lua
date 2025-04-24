@@ -49,7 +49,7 @@ vim.opt.wrap = false
 
 -- Autoindent
 vim.opt.autoindent = true
-vim.opt.smartindent = true
+vim.opt.smartindent = false -- use treesitter
 
 -- Window split
 vim.opt.splitbelow = true
