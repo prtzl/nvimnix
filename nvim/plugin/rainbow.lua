@@ -1,12 +1,15 @@
--- Optional config for rainbow-delimiters
-vim.g.rainbow_delimiters = {
+require('rainbow-delimiters.setup').setup {
     strategy = {
-        [''] = require('rainbow-delimiters.strategy.global'),
-        vim = require('rainbow-delimiters.strategy.local'),
+        [''] = 'rainbow-delimiters.strategy.global',
+        vim = 'rainbow-delimiters.strategy.local',
     },
     query = {
         [''] = 'rainbow-delimiters',
         lua = 'rainbow-blocks',
+    },
+    priority = {
+        [''] = 110,
+        lua = 210,
     },
     highlight = {
         'RainbowDelimiterRed',
