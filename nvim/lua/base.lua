@@ -11,7 +11,6 @@ vim.opt.swapfile = false
 vim.opt.laststatus = 2
 vim.opt.wildmenu = true
 vim.opt.wildmode = { list = 'full' }
-vim.opt.guicursor = ''
 vim.opt.cursorline = true
 
 -- System

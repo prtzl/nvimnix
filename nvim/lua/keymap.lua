@@ -64,7 +64,7 @@ map("n", "<C-f>", require("telescope.builtin").current_buffer_fuzzy_find)
 
 -- Custom telescope searches
 -- grep for word under cursor
-map("n", "<leader>s",
+map("n", "<LEADER>s",
     function()
         local word = vim.fn.expand("<cword>");
         require("telescope.builtin").live_grep({ default_text = word, })
@@ -72,7 +72,7 @@ map("n", "<leader>s",
 -- Grep function call/declare/signature/assign fptr "<cword>(...)" for word under cursor
 -- mostly just for C/C++ since lua can have functions as part of of a struct, like vim.g.myFunction = function()
 -- BUT, lua LSP works and is nice. So use go-to-definition hah
-map("n", "<leader>f",
+map("n", "<LEADER>f",
     function()
         local word = vim.fn.expand("<cword>");
         -- INFO: this pattern also finds two-line function def/dec where return type is on separate line
@@ -83,7 +83,7 @@ map("n", "<leader>f",
         })
     end)
 -- Grep function definition/declaration with two line type "[\w+\s+] <cword>(.*)" as well for the word under cursor
-map("n", "<leader>F",
+map("n", "<LEADER>F",
     function()
         local word = vim.fn.expand("<cword>");
         -- INFO: this pattern skips two-line function def/dec where return type is on separate line
@@ -98,7 +98,7 @@ map("n", "<leader>F",
         })
     end)
 -- Grep MACRO use signature "<#define/#if/...> <cword>" for word under cursor
-map("n", "<leader>m",
+map("n", "<LEADER>m",
     function()
         local word = vim.fn.expand("<cword>");
         local pattern = [[#\w+\s]] .. word;
@@ -107,7 +107,7 @@ map("n", "<leader>m",
         })
     end)
 -- Grep MACRO definition "#define <cword>" for word under cursor
-map("n", "<leader>M",
+map("n", "<LEADER>M",
     function()
         local word = vim.fn.expand("<cword>");
         local pattern = "#define " .. word;
@@ -153,3 +153,9 @@ map("n", "<C-t>", ":NvimTreeFindFile<CR>")
 map("n", "<space>e", vim.diagnostic.open_float)
 map("n", "]d", vim.diagnostic.goto_next)
 map("n", "[d", vim.diagnostic.goto_prev)
+
+-- Asterix - enhances * and # so that it DOES NOT jump to "next/previous"
+map("n", "*", "<PLUG>(asterisk-z*)")
+map("n", "#", "<PLUG>(asterisk-z#)")
+map("n", "g*", "<PLUG>(asterisk-gz*)")
+map("n", "g#", "<PLUG>(asterisk-gz#)")

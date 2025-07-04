@@ -52,6 +52,7 @@
         telescope-frecency-nvim # Telescope plugin for searching most used files
         telescope-fzf-native-nvim # Telescope plugin with native C fzf (faster search)
         telescope-nvim # Fuzzy search everything
+        vim-asterisk # More options on *
         vim-cpp-enhanced-highlight # better looking cpp highlighting
         vim-fugitive # Git tool
         vim-gitbranch # get git info for status bar
