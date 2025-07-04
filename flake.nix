@@ -63,17 +63,12 @@
         cmp-buffer
         cmp-cmdline
         cmp-nvim-lsp
-        cmp-omni
         cmp-path
-        cmp-treesitter
         cmp_luasnip
-        cmp-nvim-lsp-document-symbol
         cmp-spell
         cmp-nvim-lua
-        cmp-emoji
         fidget-nvim
         fzf-lsp-nvim
-        lsp_extensions-nvim
         lsp_signature-nvim
         luasnip
         lspkind-nvim
