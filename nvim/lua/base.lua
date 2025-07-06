@@ -12,6 +12,7 @@ vim.opt.laststatus = 2
 vim.opt.wildmenu = true
 vim.opt.wildmode = { list = 'full' }
 vim.opt.cursorline = true
+vim.opt.guicursor = "" -- keep it blocky, my man
 
 -- System
 vim.opt.backup = false
