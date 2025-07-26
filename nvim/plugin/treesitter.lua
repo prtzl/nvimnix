@@ -25,6 +25,3 @@ require 'nvim-treesitter.configs'.setup {
         enable = true,
     },
 }
-
--- Manualy add epics nvim plugin - just loads up epics treesitter modules at runtime
-require("epics").setup {}

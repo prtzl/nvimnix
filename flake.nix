@@ -21,14 +21,6 @@
         lazygit
       ];
 
-      # Custom epics nvim support
-      epics = pkgs.fetchFromGitHub {
-        owner = "minijackson";
-        repo = "epics.nvim";
-        rev = "843c23847bf613c7966a9412e9969d7b240483e9";
-        sha256 = "sha256-/0FIxCv5b/+eFNDHhLLgROUwEytIzJy/0sYMMarqljc=";
-      };
-
       # List of Neovim plugins (installed via nixpkgs)
       neovimPlugins = with pkgs.vimPlugins; [
         # Plugins that I know and understand where and how they're used
@@ -78,9 +70,6 @@
         nvim-dap-ui
         nvim-lspconfig
         plenary-nvim
-
-        # Others
-        epics
       ];
 
       # Custom Neovim package with built-in dotfiles
