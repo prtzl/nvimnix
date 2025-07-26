@@ -10,15 +10,16 @@
       pkgs = import nixpkgs { inherit system; };
 
       commonPackages = with pkgs; [
-        git
         bat
-        ripgrep
-        nil # nix lsp
-        texlab # latex lsp
-        python312Packages.python-lsp-server # python lsp
-        sumneko-lua-language-server # lua lsp
-        tree-sitter
+        git
         lazygit
+        nil # nix lsp
+        nixfmt-classic
+        python312Packages.python-lsp-server # python lsp
+        ripgrep
+        sumneko-lua-language-server # lua lsp
+        texlab # latex lsp
+        tree-sitter
       ];
 
       # List of Neovim plugins (installed via nixpkgs)
