@@ -147,7 +147,7 @@
 
     in {
       packages.${system}.default = wrappedNeovim;
-      nixosModules.nixos = nixosModule;
-      nixosModules.home = homeModule;
+      nixosModules.nvimnix = nixosModule;
+      homeManagerModules.nvimnix = homeModule;
     };
 }
