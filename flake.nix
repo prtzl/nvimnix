@@ -32,29 +32,30 @@
       # List of Neovim plugins (installed via nixpkgs)
       neovimPlugins = with pkgs.vimPlugins; [
         # Plugins that I know and understand where and how they're used
-        nvim-treesitter.withAllGrammars # syntax for everything
-        vim-cpp-enhanced-highlight # better looking cpp highlighting
-        markdown-preview-nvim # opens markdown preview in browser
-        telescope-nvim # Fuzzy search everything
-        telescope-fzf-native-nvim # Telescope plugin with native C fzf (faster search)
-        telescope-frecency-nvim # Telescope plugin for searching most used files
-        lualine-nvim # status bar
-        vim-gitbranch # get git info for status bar
-        git-worktree-nvim # telescope extension for git worktree
-        gitsigns-nvim # git gutter
-        vim-fugitive # Git tool
-        lazygit-nvim # Another git tool
-        impatient-nvim # Everyone and their mother includes this
-        incsearch-vim
-        nvim-autopairs # autopair braces
-        nvim-tree-lua # file tree
-        nvim-web-devicons # icons
+        alpha-nvim # greet dashboard
         base16-nvim # color schemes
         comment-nvim # smart comments
-        vim-latex-live-preview # preview latex pdf inside editor
-        rainbow-delimiters-nvim
-        alpha-nvim # greet dashboard
+        git-worktree-nvim # telescope extension for git worktree
+        gitsigns-nvim # git gutter
+        impatient-nvim # Everyone and their mother includes this
+        incsearch-vim
         indentLine # Show indentation levels
+        lazygit-nvim # Another git tool
+        lualine-nvim # status bar
+        markdown-preview-nvim # opens markdown preview in browser
+        mini-surround # put a symbol around a word
+        nvim-autopairs # autopair braces
+        nvim-tree-lua # file tree
+        nvim-treesitter.withAllGrammars # syntax for everything
+        nvim-web-devicons # icons
+        rainbow-delimiters-nvim
+        telescope-frecency-nvim # Telescope plugin for searching most used files
+        telescope-fzf-native-nvim # Telescope plugin with native C fzf (faster search)
+        telescope-nvim # Fuzzy search everything
+        vim-cpp-enhanced-highlight # better looking cpp highlighting
+        vim-fugitive # Git tool
+        vim-gitbranch # get git info for status bar
+        vim-latex-live-preview # preview latex pdf inside editor
         vim-obsession # Save sessions. Used by tmux-ressurect
         vim-visual-multi # Multiline select, so good
 
