@@ -138,6 +138,10 @@ map("i", "<F5>", function() vim.g.toggle_lsp() end)
 map("n", "<C-/>", "gcc", { remap = true, })
 map("v", "<C-/>", "gc", { remap = true, })
 map("i", "<C-/>", "<ESC>gcc<RIGHT>i", { remap = true, })
+-- Somehow the above version works outside tmux, but not in. And other way around ...
+map("n", "<C-_>", "gcc", { remap = true, })
+map("v", "<C-_>", "gc", { remap = true, })
+map("i", "<C-_>", "<ESC>gcc<RIGHT>i", { remap = true, })
 
 -- Git - lazygit
 map("n", "<C-\\>", ":LazyGit<CR>")
