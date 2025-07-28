@@ -89,7 +89,7 @@ map("n", "<LEADER>F",
         -- INFO: this pattern skips two-line function def/dec where return type is on separate line
         -- INFO: It can be made to include them by chaning the last + to *. This then also finds some commented function calls
         -- since they look like commented two line (line commented) function declarations/definitions
-        local pattern = [[(^(\s*)[/\-#*]{1,2}\s*|^)(\w+\s+)+]] .. word .. [[\(.*\)\s*;*({?(.*)*}?)*]];
+        local pattern = [[(((^(\s*)[/\-#*]{1,2}\s*|^)(\w+\s+)+)|^)]] .. word .. [[\(.*\)\s*;*({?(.*)*}?)*]];
         require("telescope.builtin").live_grep({
             default_text = pattern,
             additional_args = function()
