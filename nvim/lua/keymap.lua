@@ -135,9 +135,9 @@ map("n", "<F5>", function() vim.g.toggle_lsp() end)
 map("i", "<F5>", function() vim.g.toggle_lsp() end)
 
 -- Comments
-map("n", "<C-_>", "gcc", { remap = true, })
-map("v", "<C-_>", "gcc", { remap = true, })
-map("i", "<C-_>", "<ESC>gcc<RIGHT>i", { remap = true, })
+map("n", "<C-/>", "gcc", { remap = true, })
+map("v", "<C-/>", "gc", { remap = true, })
+map("i", "<C-/>", "<ESC>gcc<RIGHT>i", { remap = true, })
 
 -- Git - lazygit
 map("n", "<C-\\>", ":LazyGit<CR>")
