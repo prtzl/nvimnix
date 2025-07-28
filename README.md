@@ -37,3 +37,5 @@ As mentioned before it is handy that it uses it's own copy of nixpkgs in case so
 That's why in my system I decided not to follow this flake's nixpkgs to my nixos/home-manager system. It would save space (copies of packages), but could break something in future without me noticing. Better to update nvim along with nixpkgs separately.
 
 Just my two cents.
+
+Feel free to read my (old) [nixos configuration](https://github.com/prtzl/nixos) or my [new one](https://github.com/prtzl/trilby) using [trilby](https://github.com/ners/trilby) by @ners.
