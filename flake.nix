@@ -115,28 +115,42 @@
         '';
       };
 
-      module = { config, lib, pkgs, systemArgs ? { isNixos = true; }
-        , homeArgs ? { isHome = true; }, ... }: {
-
+      # Ok so I could NOT select either home or nixos with option and switch the lazy if for either or.
+      # Got only infinite recursion. Damn, so let's do this the manual way.
+      makeModule = moduleType:
+        { config, lib, pkgs, ... }: {
           options.programs.nvimnix = {
             enable = lib.mkEnableOption "Enable nvimnix (Neovim wrapper)";
-            default = false;
+            # config = lib.mkOption {
+            #   type = lib.types.enum [ "home" "nixos" null ];
+            #   default = null;
+            # };
           };
 
           config = lib.mkIf config.programs.nvimnix.enable (lib.mkMerge [
-            (if (systemArgs ? isSystem && systemArgs.isSystem) then {
+            # ({
+            #   assertions = [{
+            #     assertion = config.programs.nvimnix.config != null;
+            #     message =
+            #       ''nvimnix: Select "home" or "nixos" in `nvimnix.config`!'';
+            #   }];
+            # })
+            (if (moduleType == "nixos") then {
               environment.systemPackages = [ wrappedNeovim ];
             } else
               { })
-            (if (homeArgs ? isHome && homeArgs.isHome) then {
+            (if (moduleType == "home") then {
               home.packages = [ wrappedNeovim ];
             } else
               { })
           ]);
         };
+      nixosModule = makeModule "nixos";
+      homeModule = makeModule "home";
 
     in {
       packages.${system}.default = wrappedNeovim;
-      nixosModules.default = module;
+      nixosModules.nixos = nixosModule;
+      nixosModules.home = homeModule;
     };
 }
