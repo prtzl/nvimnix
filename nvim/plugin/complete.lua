@@ -38,7 +38,10 @@ cmp.setup({
 
     -- Experiment: disable autocomplete, so it has to be triggered with <c-k> (toggle) - like VSCode <c-space>
     completion = {
-        autocomplete = false
+        autocomplete = { -- list of events when autocomplete triggers automatically
+            cmp.TriggerEvent.TextChanged,
+            cmp.TriggerEvent.InsertEnter,
+        },
     },
 
     -- Enable LSP snippets
@@ -211,7 +214,8 @@ require('lspconfig.ui.windows').default_options.border = 'single'
 -- LSP servers
 -- This shit is added to every server and it made it so
 -- when you accept a suggestion like a function, it fills the signature and enters - finally
-local capabilities = vim.lsp.protocol.make_client_capabilities()
+-- local capabilities = vim.lsp.protocol.make_client_capabilities()
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 -- C/C++ LSP
