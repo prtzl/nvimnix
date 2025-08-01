@@ -1,9 +1,12 @@
 {
   description = "Standalone Neovim with plugins and custom configuration";
 
-  inputs = { nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable"; };
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+  };
 
-  outputs = { nixpkgs, ... }:
+  outputs =
+    { nixpkgs, ... }:
     let
       # I only use nixos on my PC so I don't give 2 hoots about this now.
       system = "x86_64-linux";
@@ -14,7 +17,7 @@
         git
         lazygit
         nil # nix lsp
-        nixfmt-classic
+        nixfmt-rfc-style
         python312Packages.python-lsp-server # python lsp
         ripgrep
         sumneko-lua-language-server # lua lsp
@@ -104,8 +107,15 @@
 
       # Ok so I could NOT select either home or nixos with option and switch the lazy if for either or.
       # Got only infinite recursion. Damn, so let's do this the manual way.
-      makeModule = moduleType:
-        { config, lib, pkgs, ... }: {
+      makeModule =
+        moduleType:
+        {
+          config,
+          lib,
+          pkgs,
+          ...
+        }:
+        {
           options.programs.nvimnix = {
             enable = lib.mkEnableOption "Enable nvimnix (Neovim wrapper)";
             # config = lib.mkOption {
@@ -114,28 +124,39 @@
             # };
           };
 
-          config = lib.mkIf config.programs.nvimnix.enable (lib.mkMerge [
-            # ({
-            #   assertions = [{
-            #     assertion = config.programs.nvimnix.config != null;
-            #     message =
-            #       ''nvimnix: Select "home" or "nixos" in `nvimnix.config`!'';
-            #   }];
-            # })
-            (if (moduleType == "nixos") then {
-              environment.systemPackages = [ wrappedNeovim ];
-            } else
-              { })
-            (if (moduleType == "home") then {
-              home.packages = [ wrappedNeovim ];
-            } else
-              { })
-          ]);
+          config = lib.mkIf config.programs.nvimnix.enable (
+            lib.mkMerge [
+              # ({
+              #   assertions = [{
+              #     assertion = config.programs.nvimnix.config != null;
+              #     message =
+              #       ''nvimnix: Select "home" or "nixos" in `nvimnix.config`!'';
+              #   }];
+              # })
+              (
+                if (moduleType == "nixos") then
+                  {
+                    environment.systemPackages = [ wrappedNeovim ];
+                  }
+                else
+                  { }
+              )
+              (
+                if (moduleType == "home") then
+                  {
+                    home.packages = [ wrappedNeovim ];
+                  }
+                else
+                  { }
+              )
+            ]
+          );
         };
       nixosModule = makeModule "nixos";
       homeModule = makeModule "home";
 
-    in {
+    in
+    {
       packages.${system}.default = wrappedNeovim;
       nixosModules.nvimnix = nixosModule;
       homeManagerModules.nvimnix = homeModule;
