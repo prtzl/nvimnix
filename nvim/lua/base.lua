@@ -1,24 +1,32 @@
--- base gui
+-- Base gui
 vim.g.mapleader = " "
+vim.opt.cursorline = true
+vim.opt.guicursor = "" -- keep it blocky, my man
+vim.opt.laststatus = 2
+vim.opt.mouse = 'a'
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.ruler = true
+vim.opt.scrolloff = 10
 vim.opt.showcmd = true
-vim.opt.showmode = true
 vim.opt.showmatch = true
-vim.opt.mouse = 'a'
-vim.opt.swapfile = false
-vim.opt.laststatus = 2
+vim.opt.showmode = true
+vim.opt.sidescrolloff = 10
 vim.opt.wildmenu = true
 vim.opt.wildmode = { list = 'full' }
-vim.opt.cursorline = true
-vim.opt.guicursor = "" -- keep it blocky, my man
 
--- System
+-- File handling
 vim.opt.backup = false
+vim.opt.writebackup = false
+vim.opt.swapfile = false
+vim.opt.undodir = vim.fn.expand("!/.vim/undodir")
+vim.opt.undofile = true
+vim.opt.autoread = true
+vim.opt.autowrite = false
+vim.opt.autochdir = false
+
+-- History of commands (1000 commands)
 vim.opt.history = 1000
-vim.opt.scrolloff = 10
-vim.opt.sidescrolloff = 10
 
 -- Clipboard
 vim.opt.clipboard:append { 'unnamedplus' }
