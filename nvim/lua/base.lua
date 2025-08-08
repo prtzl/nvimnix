@@ -13,13 +13,14 @@ vim.opt.showmatch = true
 vim.opt.showmode = true
 vim.opt.sidescrolloff = 10
 vim.opt.wildmenu = true
-vim.opt.wildmode = { list = 'full' }
+vim.opt.wildmode = 'list:full'
+vim.opt.shortmess:append("c")
 
 -- File handling
 vim.opt.backup = false
 vim.opt.writebackup = false
 vim.opt.swapfile = false
-vim.opt.undodir = vim.fn.expand("!/.vim/undodir")
+vim.opt.undodir = vim.fn.expand("~/.vim/undodir")
 vim.opt.undofile = true
 vim.opt.autoread = true
 vim.opt.autowrite = false
@@ -30,9 +31,6 @@ vim.opt.history = 1000
 
 -- Clipboard
 vim.opt.clipboard:append { 'unnamedplus' }
-
--- Enable background buffer
-vim.o.hidden = true
 
 -- Format
 vim.opt.encoding = 'utf8'
@@ -45,7 +43,6 @@ vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
 -- Tab
-vim.opt.smarttab = true
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 0 -- follows tabstop
 vim.opt.shiftwidth = 0  -- follows tabstop
