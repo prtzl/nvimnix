@@ -13,6 +13,7 @@ map("i", "<C-w><RIGHT>", "<ESC><right><c-w><right><ins>")
 map("i", "<C-w><up>", "<ESC><RIGHT><c-w><up><ins>")
 map("i", "<C-w><down>", "<ESC><RIGHT><c-w><down><ins>")
 
+-- Moving line(s)
 map("n", "<s-up>", ":move-2<CR>")
 map("n", "<s-down>", ":move+1<CR>")
 map("i", "<s-up>", "<ESC>:move-2<CR><ins><RIGHT>")
@@ -30,13 +31,12 @@ map("n", "<C-s-RIGHT>", ":vertical resize +5<CR>")
 map("!", "<C-bs>", "<c-w>")
 map("!", "<C-h>", "<c-w>")
 
--- move to the end of line while in insert mode
-map("i", "<C-]>", "<ESC>A")
+-- Move back and forth between buffers based on last used
+vim.keymap.set("n", "]]", function() vim.g.cycle_mru(false) end)
+vim.keymap.set("n", "[[", function() vim.g.cycle_mru(true) end)
 
--- Move back and forth in buffers
--- Note so self: <C-[> is maped as if <ESC> is pressed - higher power control, abandon hope
-map("n", "]]", ":bnext<CR>")
-map("n", "[[", ":bprev<CR>")
+-------------------------------------------------------------------------------
+-- PLUGINS and PLUGIN-RELATED actions
 
 -- LSP
 map("n", "gd", vim.lsp.buf.declaration)
@@ -129,10 +129,6 @@ map("i", "<F3>", function() vim.g.toggleSpell() end)
 -- Autoformat toggle
 map("n", "<F4>", function() vim.g.toggleFormat(nil) end)
 map("i", "<F4>", function() vim.g.toggleFormat(nil) end)
-
--- Set key mapping to toggle LSP on or off
-map("n", "<F5>", function() vim.g.toggle_lsp() end)
-map("i", "<F5>", function() vim.g.toggle_lsp() end)
 
 -- Comments
 map("n", "<C-/>", "gcc", { remap = true, })
