@@ -32,8 +32,8 @@ map("!", "<C-bs>", "<c-w>")
 map("!", "<C-h>", "<c-w>")
 
 -- Move back and forth between buffers based on last used
-vim.keymap.set("n", "]]", function() vim.g.cycle_mru(false) end)
-vim.keymap.set("n", "[[", function() vim.g.cycle_mru(true) end)
+map("n", "]]", function() vim.g.cycle_mru(false) end)
+map("n", "[[", function() vim.g.cycle_mru(true) end)
 
 -------------------------------------------------------------------------------
 -- PLUGINS and PLUGIN-RELATED actions
