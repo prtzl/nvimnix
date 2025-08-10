@@ -4,10 +4,10 @@ vim.diagnostic.config {
     virtual_text = true,
     signs = {
         text = {
-            [ x.ERROR ] = "🔥",
-            [ x.WARN ] = "!",
-            [ x.HINT ] = "💡",
-            [ x.INFO ] = "🔸",
+            [x.ERROR] = "🔥",
+            [x.WARN] = "!",
+            [x.HINT] = "💡",
+            [x.INFO] = "🔸",
         },
     },
     update_in_insert = true,
@@ -23,4 +23,3 @@ vim.diagnostic.config {
         scope = 'line',
     },
 }
-
