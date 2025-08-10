@@ -216,72 +216,40 @@ local capabilities = require('cmp_nvim_lsp').default_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 -- C/C++
--- It finds the compile_commands.json closest to the opened file (upwards in the directory tree)
--- Goes up until search_ancestors finds somewhere compilecommands. Then it goes down into that direction.
--- First file takes a bit < 1s, then it's cached and does not add any noticable delay
--- No static --compile-commands-dir flag (because now the root is per-file)
-local util = require("lspconfig.util")
-
-local cache = {}
-
-local function find_compile_commands_down(dir)
-    if cache[dir] ~= nil then
-        return cache[dir]
-    end
-
-    local function scan_dir(d)
-        for _, entry in ipairs(vim.fn.readdir(d)) do
-            local full_path = d .. "/" .. entry
-            if vim.fn.isdirectory(full_path) == 1 then
-                local found = scan_dir(full_path)
-                if found then
-                    return found
-                end
-            elseif entry == "compile_commands.json" then
-                return d
-            end
-        end
-        return nil
-    end
-
-    local found_dir = scan_dir(dir)
-    cache[dir] = found_dir
-    return found_dir
-end
-
-local function root_dir(fname)
-    local compile_dir_ancestor = util.search_ancestors(fname, function(dir)
-        local found = find_compile_commands_down(dir)
-        if found then
-            return dir
-        end
-    end)
-
-    if compile_dir_ancestor then
-        return find_compile_commands_down(compile_dir_ancestor)
-    end
-
-    return util.root_pattern(".git")(fname) or vim.fn.getcwd()
-end
-
-require("lspconfig").clangd.setup({
-    autostart = true,
-    handlers = handlers,
-    capabilities = capabilities,
-    root_dir = root_dir,
+vim.lsp.enable('clangd', false)
+vim.lsp.config.clangd = {
     cmd = {
         'clangd',
         '--all-scopes-completion',
         '--background-index',
         '--clang-tidy',
-        -- Removed static --compile-commands-dir flag
+        '--compile-commands-dir=build',
         '--completion-style=detailed',
         '--function-arg-placeholders',
         '--header-insertion-decorators',
         '--header-insertion=never',
     },
+    root_markers = { '.clangd', 'compile_commands.json' },
     filetypes = { "c", "cpp", "h", "hpp" },
-})
+    -- root_dir = root_dir,
+}
+
+vim.g.lsp_state = false
+vim.keymap.set('n', '<F5>', function()
+    local ft = vim.bo.filetype
+    if vim.tbl_contains({ "c", "cpp", "h", "hpp" }, ft) then
+        if vim.g.lsp_state == false then
+            vim.g.lsp_state = true
+            vim.lsp.enable('clangd', true)
+        else
+            vim.g.lsp_state = false
+            vim.lsp.enable('clangd', false)
+        end
+        vim.notify("clangd started for " .. ft)
+    else
+        vim.notify("clangd not started: unsupported filetype " .. ft, vim.log.levels.WARN)
+    end
+end)
 
 -- Nix LSP
 require "lspconfig".nil_ls.setup({
