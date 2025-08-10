@@ -1,9 +1,12 @@
 {
   description = "Standalone Neovim with plugins and custom configuration";
 
-  inputs = { nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable"; };
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+  };
 
-  outputs = { nixpkgs, ... }:
+  outputs =
+    { nixpkgs, ... }:
     let
       # I only use nixos on my PC so I don't give 2 hoots about this now.
       system = "x86_64-linux";
@@ -24,14 +27,12 @@
 
       # List of Neovim plugins (installed via nixpkgs)
       neovimPlugins = with pkgs.vimPlugins; [
-        # Plugins that I know and understand where and how they're used
+
         alpha-nvim # greet dashboard
         base16-nvim # color schemes
         comment-nvim # smart comments
         git-worktree-nvim # telescope extension for git worktree
         gitsigns-nvim # git gutter
-        impatient-nvim # Everyone and their mother includes this
-        incsearch-vim
         indentLine # Show indentation levels
         lazygit-nvim # Another git tool
         lualine-nvim # status bar
@@ -41,36 +42,34 @@
         nvim-tree-lua # file tree
         nvim-treesitter.withAllGrammars # syntax for everything
         nvim-web-devicons # icons
-        rainbow-delimiters-nvim
+        rainbow-delimiters-nvim # explains it
         telescope-frecency-nvim # Telescope plugin for searching most used files
         telescope-fzf-native-nvim # Telescope plugin with native C fzf (faster search)
         telescope-nvim # Fuzzy search everything
         vim-asterisk # More options on *
         vim-cpp-enhanced-highlight # better looking cpp highlighting
         vim-fugitive # Git tool
-        # vim-gitbranch # get git info for status bar
         vim-latex-live-preview # preview latex pdf inside editor
-        vim-obsession # Save sessions. Used by tmux-ressurect
         vim-visual-multi # Multiline select, so good
 
         # LSP stuff
         cmp-buffer
         cmp-cmdline
         cmp-nvim-lsp
-        cmp-path
-        cmp_luasnip
-        cmp-spell
         cmp-nvim-lua
+        cmp-path
+        cmp-spell
+        cmp_luasnip
         fidget-nvim
-        fzf-lsp-nvim
         lsp_signature-nvim
-        luasnip
         lspkind-nvim
+        luasnip
         nvim-cmp
         nvim-dap
         nvim-dap-ui
         nvim-lspconfig
         plenary-nvim
+
       ];
 
       # Custom Neovim package with built-in dotfiles
@@ -104,8 +103,15 @@
 
       # Ok so I could NOT select either home or nixos with option and switch the lazy if for either or.
       # Got only infinite recursion. Damn, so let's do this the manual way.
-      makeModule = moduleType:
-        { config, lib, pkgs, ... }: {
+      makeModule =
+        moduleType:
+        {
+          config,
+          lib,
+          pkgs,
+          ...
+        }:
+        {
           options.programs.nvimnix = {
             enable = lib.mkEnableOption "Enable nvimnix (Neovim wrapper)";
             # config = lib.mkOption {
@@ -114,28 +120,39 @@
             # };
           };
 
-          config = lib.mkIf config.programs.nvimnix.enable (lib.mkMerge [
-            # ({
-            #   assertions = [{
-            #     assertion = config.programs.nvimnix.config != null;
-            #     message =
-            #       ''nvimnix: Select "home" or "nixos" in `nvimnix.config`!'';
-            #   }];
-            # })
-            (if (moduleType == "nixos") then {
-              environment.systemPackages = [ wrappedNeovim ];
-            } else
-              { })
-            (if (moduleType == "home") then {
-              home.packages = [ wrappedNeovim ];
-            } else
-              { })
-          ]);
+          config = lib.mkIf config.programs.nvimnix.enable (
+            lib.mkMerge [
+              # ({
+              #   assertions = [{
+              #     assertion = config.programs.nvimnix.config != null;
+              #     message =
+              #       ''nvimnix: Select "home" or "nixos" in `nvimnix.config`!'';
+              #   }];
+              # })
+              (
+                if (moduleType == "nixos") then
+                  {
+                    environment.systemPackages = [ wrappedNeovim ];
+                  }
+                else
+                  { }
+              )
+              (
+                if (moduleType == "home") then
+                  {
+                    home.packages = [ wrappedNeovim ];
+                  }
+                else
+                  { }
+              )
+            ]
+          );
         };
       nixosModule = makeModule "nixos";
       homeModule = makeModule "home";
 
-    in {
+    in
+    {
       packages.${system}.default = wrappedNeovim;
       nixosModules.nvimnix = nixosModule;
       homeManagerModules.nvimnix = homeModule;
