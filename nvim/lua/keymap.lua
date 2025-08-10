@@ -39,11 +39,11 @@ vim.keymap.set("n", "[[", function() vim.g.cycle_mru(true) end)
 -- PLUGINS and PLUGIN-RELATED actions
 
 -- LSP
-map("n", "gd", vim.lsp.buf.declaration)
-map("n", "gD", vim.lsp.buf.definition)
-map("n", "gh", vim.lsp.buf.hover)
-map("n", "gi", vim.lsp.buf.implementation)
-map("n", "gr", vim.lsp.buf.references)
+map("n", "<leader>d", vim.lsp.buf.declaration)
+map("n", "<leader>D", vim.lsp.buf.definition)
+map("n", "<leader>h", vim.lsp.buf.hover)
+map("n", "<leader>i", vim.lsp.buf.implementation)
+map("n", "<leader>r", vim.lsp.buf.references)
 map("n", "<F2>", vim.lsp.buf.rename, { silent = false })
 map("n", "<F8>", vim.lsp.buf.code_action, { silent = false })
 
