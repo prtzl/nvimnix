@@ -2,6 +2,23 @@ local mru_buffers = {}
 local current_index = 1
 local cycling = false
 
+function dump(o)
+    if type(o) == 'table' then
+        local s = '{ '
+        for k, v in pairs(o) do
+            if type(k) ~= 'number' then k = '"' .. k .. '"' end
+            s = s .. '[' .. k .. '] = ' .. dump(v) .. ','
+        end
+        return s .. '} '
+    else
+        return tostring(o)
+    end
+end
+
+function vim.g.print_buffers()
+    print("Mru buffers: ", dump(mru_buffers), "cureeeetn index: ", current_index)
+end
+
 -- Remove invalid buffers from MRU (to be safe)
 local function clean_mru()
     local new_mru = {}
