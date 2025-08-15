@@ -6,8 +6,8 @@ require('luasnip/loaders/from_vscode').lazy_load()
 local lspkind = require 'lspkind'
 
 local has_words_before = function()
-    local line, col = table.unpack(vim.api.nvim_win_get_cursor(0))
-    return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+    local _, col = unpack(vim.api.nvim_win_get_cursor(0))
+    return col ~= 0 and not vim.api.nvim_get_current_line():sub(col, col):match("%s")
 end
 
 cmp.setup({
@@ -284,6 +284,9 @@ require "lspconfig".lua_ls.setup({
     capabilities = capabilities,
     settings = {
         Lua = {
+            runtime = {
+                version = "LuaJIT",
+            },
             diagnostics = {
                 globals = { 'vim' }, -- Recognize 'vim' as a global variable
             },
