@@ -5,23 +5,24 @@ vim.cmd 'set termguicolors'
 vim.o.background = "dark"
 vim.cmd("colorscheme base16-da-one-ocean")
 
-local color_bg = require('base16-colorscheme').colors.base00
-
 -- Overrides
+-- Override background to inherit terminal one
+vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
+
 -- Transparent complete
 vim.api.nvim_set_hl(0, "CmpItemAbbr", { cternbg = nil, bg = nil })
 
 -- More visible match and line highlights in Telescope preview
-vim.api.nvim_set_hl(0, "TelescopePreviewMatch", { bg = "#ffaf5f", fg = "#000000", bold = true, })
-vim.api.nvim_set_hl(0, "TelescopePreviewLine", { bg = "#44475a", bold = true, })
-vim.api.nvim_set_hl(0, "TelescopePromptNormal", { bg = color_bg, })
-vim.api.nvim_set_hl(0, "TelescopePromptPrefix", { bg = color_bg, })
-
+vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = "none" })
+vim.api.nvim_set_hl(0, "TelescopePreviewMatch", { bg = "none", fg = "#000000", bold = true, })
+vim.api.nvim_set_hl(0, "TelescopePreviewLine", { bg = "none", bold = true, })
+vim.api.nvim_set_hl(0, "TelescopePromptNormal", { bg = "none", })
+vim.api.nvim_set_hl(0, "TelescopePromptPrefix", { bg = "none", })
 
 -- Telescope borders
 vim.api.nvim_set_hl(0, "TelescopeBorder", { ctermbg = 220 })
 vim.api.nvim_set_hl(0, "TelescopePromptBorder", { ctermbg = 220 })
-
 
 -- Define highlight groups for signs and their line/number highlights
 vim.api.nvim_set_hl(0, 'GitSignsAdd', { fg = '#5f9400', bold = true })
