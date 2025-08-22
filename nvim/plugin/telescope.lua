@@ -46,6 +46,9 @@ telescope.setup {
     },
 }
 
+-- Actually use the extension for performance gainz (havent's noticed any issues until now tho ...)
+require('telescope').load_extension('fzf')
+
 -- Keymaps for project-specific searches
 vim.keymap.set("n", "<leader>pf", function()
     builtin.find_files({
