@@ -50,12 +50,13 @@ telescope.setup {
 vim.keymap.set("n", "<leader>pf", function()
     builtin.find_files({
         search_dirs = project_search_dirs(),
-        hidden = true,
+        cwd = vim.fn.getcwd(),
     })
 end, { desc = "Find files (project dirs from NVIM_SEARCH_DIRS)" })
 
 vim.keymap.set("n", "<leader>pg", function()
     builtin.live_grep({
         search_dirs = project_search_dirs(),
+        cwd = vim.fn.getcwd(),
     })
 end, { desc = "Live grep (project dirs from NVIM_SEARCH_DIRS)" })
