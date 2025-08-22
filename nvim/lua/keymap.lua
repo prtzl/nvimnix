@@ -57,11 +57,9 @@ map("i", "<C-k>", "<cmd>lua require(luasnip).jump(-1)<CR>")
 map("s", "<C-k>", "<cmd>lua require(luasnip).jump(-1)<CR>")
 
 -- FZF
-map("n", "<C-p>", require("telescope.builtin").find_files)
 map("n", "<C-a>", function()
     require("telescope.builtin").find_files { no_ignore = true, no_ignore_parent = true, hidden = true }
 end)
-map("n", "<C-g>", require("telescope.builtin").live_grep)
 map("n", "<C-b>", require("telescope.builtin").buffers)
 map("n", "<C-f>", require("telescope.builtin").current_buffer_fuzzy_find)
 
