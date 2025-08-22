@@ -16,7 +16,7 @@ vim.api.nvim_set_hl(0, "CmpItemAbbr", { cternbg = nil, bg = nil })
 -- More visible match and line highlights in Telescope preview
 vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = "none" })
 vim.api.nvim_set_hl(0, "TelescopePreviewMatch", { bg = "none", fg = "#000000", bold = true, })
-vim.api.nvim_set_hl(0, "TelescopePreviewLine", { bg = "none", bold = true, })
+vim.api.nvim_set_hl(0, "TelescopePreviewLine", { bg = "#44475a", bold = true, })
 vim.api.nvim_set_hl(0, "TelescopePromptNormal", { bg = "none", })
 vim.api.nvim_set_hl(0, "TelescopePromptPrefix", { bg = "none", })
 
