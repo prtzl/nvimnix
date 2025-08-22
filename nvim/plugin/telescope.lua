@@ -74,25 +74,52 @@ local live_multigrep = function(opts)
     }):find()
 end
 
+-- Removes douplicate/overlapping directories
+local function dedup_and_prune_dirs(dirs)
+    -- normalize all dirs to absolute real paths
+    local norm = {}
+    for _, d in ipairs(dirs) do
+        table.insert(norm, vim.fn.fnamemodify(d, ":p"))
+    end
+
+    -- sort by length (shortest first, so parents come before children)
+    table.sort(norm, function(a, b) return #a < #b end)
+
+    local result = {}
+    for _, d in ipairs(norm) do
+        local is_sub = false
+        for _, kept in ipairs(result) do
+            if string.sub(d, 1, #kept) == kept then
+                -- d is inside kept, so skip
+                is_sub = true
+                break
+            end
+        end
+        if not is_sub then
+            table.insert(result, d)
+        end
+    end
+
+    return result
+end
+
 -- Helper to get project-specific search dirs from direnv
 local function project_search_dirs()
     local env_val = os.getenv("NVIM_SEARCH_DIRS")
-    if not env_val or env_val == "" then
-        return { vim.fn.getcwd() }
-    end
+    local dirs = { vim.fn.getcwd() } -- always include cwd
 
-    local dirs = {}
-    table.insert(dirs, vim.fn.getcwd()) -- allways have cwd when env dirs are supplied
-    for dir in string.gmatch(env_val, "%S+") do
-        -- Make fully absolute path
-        local abs_dir = vim.fn.fnamemodify(dir, ":p")
-        if vim.fn.isdirectory(abs_dir) == 1 then
-            table.insert(dirs, abs_dir)
-        else
-            print("Warning: directory does not exist: " .. abs_dir)
+    if env_val and env_val ~= "" then
+        for dir in string.gmatch(env_val, "%S+") do
+            local abs_dir = vim.fn.fnamemodify(dir, ":p")
+            if vim.fn.isdirectory(abs_dir) == 1 then
+                table.insert(dirs, abs_dir)
+            else
+                print("Warning: directory does not exist: " .. abs_dir)
+            end
         end
     end
-    return dirs
+
+    return dedup_and_prune_dirs(dirs)
 end
 
 -- My default live grep - separate search term by two spaces and the second argument is now file type pattern
