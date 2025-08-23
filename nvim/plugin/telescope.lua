@@ -44,7 +44,8 @@ local live_multigrep = function(opts)
             ["l"] = "*.lua",
             ["v"] = "*.vim",
             ["n"] = "*.{vim,lua}",
-            ["c"] = "*.c",
+            ["c"] = "*.{c,cpp}",
+            ["h"] = "*.{h,hpp}",
             ["r"] = "*.rs",
             ["g"] = "*.go",
         }
@@ -71,7 +72,12 @@ local live_multigrep = function(opts)
                 if opts.shortcuts[prompt_split[2]] then
                     pattern = opts.shortcuts[prompt_split[2]]
                 else
-                    pattern = prompt_split[2]
+                    -- Automatically interpret as file extension if it doesn't already have a wildcard
+                    if not prompt_split[2]:match("[*{}]") then
+                        pattern = "*." .. prompt_split[2]
+                    else
+                        pattern = prompt_split[2]
+                    end
                 end
 
                 table.insert(args, string.format(opts.pattern, pattern))
