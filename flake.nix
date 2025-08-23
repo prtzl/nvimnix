@@ -6,11 +6,11 @@
   };
 
   outputs =
-    { nixpkgs, ... }:
+    inputs:
     let
       # I only use nixos on my PC so I don't give 2 hoots about this now.
       system = "x86_64-linux";
-      pkgs = import nixpkgs { inherit system; };
+      pkgs = import inputs.nixpkgs { inherit system; };
 
       commonPackages = with pkgs; [
         bat
