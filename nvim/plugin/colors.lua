@@ -3,12 +3,23 @@ vim.cmd 'set termguicolors'
 
 -- Color mode
 vim.o.background = "dark"
-vim.cmd("colorscheme base16-da-one-ocean")
+
+require 'base16-colorscheme'.with_config({
+    telescope = true,
+    indentblankline = true,
+    notify = true,
+    ts_rainbow = true,
+    cmp = true,
+    illuminate = true,
+    dapui = true,
+})
+
+vim.cmd('colorscheme base16-precious-dark-eleven')
 
 -- Overrides
 -- Override background to inherit terminal one
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" }) -- with the theme its' nt that bad
 
 -- Transparent complete
 vim.api.nvim_set_hl(0, "CmpItemAbbr", { cternbg = nil, bg = nil })
