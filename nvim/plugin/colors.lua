@@ -24,10 +24,17 @@ vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 -- Transparent complete
 vim.api.nvim_set_hl(0, "CmpItemAbbr", { cternbg = nil, bg = nil })
 
--- More visible match and line highlights in Telescope preview
+-- Telescope
+-- No bracground in telescope
 vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = "none" })
+
+-- More visible match word in match file list
+vim.api.nvim_set_hl(0, "TelescopeSelection", { bg = "#44475a", bold = true, })
+vim.api.nvim_set_hl(0, "TelescopeMatching", { fg = "#ff79c6", bold = true, underline = true, })
+
+-- More visible match line in preview
 vim.api.nvim_set_hl(0, "TelescopePreviewMatch", { bg = "none", fg = "#000000", bold = true, })
-vim.api.nvim_set_hl(0, "TelescopePreviewLine", { bg = "#44475a", bold = true, })
+vim.api.nvim_set_hl(0, "TelescopePreviewLine", { bg = "#3b3c4d", bold = true, underline = true, })
 vim.api.nvim_set_hl(0, "TelescopePromptNormal", { bg = "none", })
 vim.api.nvim_set_hl(0, "TelescopePromptPrefix", { bg = "none", })
 
