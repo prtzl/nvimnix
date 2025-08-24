@@ -14,7 +14,7 @@ require 'base16-colorscheme'.with_config({
     dapui = true,
 })
 
-vim.cmd('colorscheme base16-precious-dark-eleven')
+vim.cmd('colorscheme base16-da-one-ocean')
 
 -- Overrides
 -- Override background to inherit terminal one
