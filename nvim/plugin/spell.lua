@@ -5,7 +5,7 @@ vim.opt.spell = false
 vim.opt.spelllang = { 'en_us' }
 
 local toggleSpell = function()
-    local isEnabled = vim.opt.spell
+    local isEnabled = vim.opt.spell:get()
     if isEnabled then
         vim.opt.spell = false
         print("Spell disabled!")
