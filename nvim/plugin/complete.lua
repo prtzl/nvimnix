@@ -229,7 +229,7 @@ vim.lsp.config.clangd = {
 }
 
 local clangdLspState = false
-map('n', '<F9>', function()
+map('n', '<F11>', function()
         local ft = vim.bo.filetype
         if vim.tbl_contains({ "c", "cpp", "h", "hpp" }, ft) then
             if clangdLspState == false then
