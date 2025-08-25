@@ -191,12 +191,6 @@ local border = {
     { "│", "FloatBorder" },
 }
 
--- LSP settings (for overriding per client)
-local handlers = {
-    ["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = border }),
-    ["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = border }),
-}
-
 -- To instead override globally
 local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
 function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
@@ -234,16 +228,18 @@ vim.lsp.config.clangd = {
     -- root_dir = root_dir,
 }
 
-vim.g.lsp_state = false
+local clangdLspState = false
 map('n', '<F9>', function()
         local ft = vim.bo.filetype
         if vim.tbl_contains({ "c", "cpp", "h", "hpp" }, ft) then
-            if vim.g.lsp_state == false then
-                vim.g.lsp_state = true
+            if clangdLspState == false then
+                clangdLspState = true
                 vim.lsp.enable('clangd', true)
+                vim.notify("Clangd enabled")
             else
-                vim.g.lsp_state = false
+                clangdLspState = false
                 vim.lsp.enable('clangd', false)
+                vim.notify("Clangd disabled")
             end
             vim.notify("clangd started for " .. ft)
         else
