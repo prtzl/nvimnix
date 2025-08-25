@@ -8,6 +8,8 @@ local conf = require 'telescope.config'.values
 local sorters = require "telescope.sorters"
 local flatten = vim.tbl_flatten
 
+local map = require('utils').map
+
 telescope.setup {
     defaults = {
         layout_strategy = 'horizontal',
@@ -163,17 +165,121 @@ local function project_search_dirs()
 end
 
 -- My default live grep - separate search term by two spaces and the second argument is now file type pattern
-vim.keymap.set("n", "<leader>pg", function()
-    live_multigrep({
-        search_dirs = project_search_dirs(),
-        cwd = vim.fn.getcwd(),
-    })
-end, { desc = "Live multigrep - second option is file filter (project dirs from NVIM_SEARCH_DIRS)" })
+map("n", "<leader>pg", function()
+        live_multigrep({
+            cwd = vim.fn.getcwd(),
+            search_dirs = project_search_dirs(),
+        })
+    end,
+    { desc = "Live multigrep - double space separates file type (Telescope)" })
 
 -- Keymaps for project-specific searches
-vim.keymap.set("n", "<leader>pf", function()
-    builtin.find_files({
-        search_dirs = project_search_dirs(),
-        cwd = vim.fn.getcwd(),
-    })
-end, { desc = "Find files (project dirs from NVIM_SEARCH_DIRS)" })
+map("n", "<leader>pf", function()
+        builtin.find_files({
+            cwd = vim.fn.getcwd(),
+            search_dirs = project_search_dirs(),
+        })
+    end,
+    { desc = "Find files (Telescope)" })
+
+-- Find all files
+map("n", "<C-a>", function()
+        require("telescope.builtin").find_files({
+            cwd = vim.fn.getcwd(),
+            hidden = true,
+            no_ignore = true,
+            no_ignore_parent = true,
+            search_dirs = project_search_dirs(),
+        })
+    end,
+    { desc = "Find ALL files using Telescope" })
+
+-- Find buffers
+map("n", "<leader>pb", require("telescope.builtin").buffers,
+    { desc = "Find buffers (Telescope)" })
+
+-- Local file search
+map("n", "<leader>pl", require("telescope.builtin").current_buffer_fuzzy_find,
+    { desc = "Local buffer fuzzy find (Telescope)" })
+
+--------------------------------------------------------------------------------
+-- Custom telescope searches
+-- grep for word under cursor
+map("n", "<LEADER>ps",
+    function()
+        local word = vim.fn.expand("<cword>");
+        require("telescope.builtin").live_grep({
+            cwd = vim.fn.getcwd(),
+            default_text = word,
+            search_dirs = project_search_dirs(),
+        })
+    end)
+
+-- Grep function call/declare/signature/assign fptr "<cword>(...)" for word under cursor
+-- mostly just for C/C++ since lua can have functions as part of of a struct, like vim.g.myFunction = function()
+-- BUT, lua LSP works and is nice. So use go-to-definition hah
+map("n", "<LEADER>pd",
+    function()
+        local word = vim.fn.expand("<cword>");
+        -- INFO: this pattern also finds two-line function def/dec where return type is on separate line
+        -- INFO: It can exclude them by modifying third or parameter to search for commented lines without anything in front, maybe
+        -- local pattern = [[(\s?,?\w\s*=\s*|^\s+|.*[/\-#*]{1,2}\s*)]] .. word .. [[[\(.*\)]?]];
+        local pattern = word .. [[\s*\(]]
+        require("telescope.builtin").live_grep({
+            cwd = vim.fn.getcwd(),
+            default_text = pattern,
+            search_dirs = project_search_dirs(),
+        })
+    end)
+
+-- Grep function definition/declaration with two line type "[\w+\s+] <cword>(.*)" as well for the word under cursor
+map("n", "<LEADER>pD",
+    function()
+        local word = vim.fn.expand("<cword>");
+        -- INFO: this pattern skips two-line function def/dec where return type is on separate line
+        -- INFO: It can be made to include them by chaning the last + to *. This then also finds some commented function calls
+        -- since they look like commented two line (line commented) function declarations/definitions
+        -- local pattern = [[(((^(\s*)[/\-#*]{1,2}\s*|^)(\w+\s+)+)|^)]] .. word .. [[\(.*\)\s*;*({?(.*)*}?)*]];
+
+        -- Pattern explanation:
+        -- ^\s*                        : start of line + optional spaces
+        -- (?:static|inline|virtual|constexpr)? : optional qualifiers
+        -- [\w:<>~*&\s]+               : return type (including pointers, templates, destructors)
+        -- word                         : function name
+        -- \s*\([^)]*\)                 : argument list (non-greedy, single line)
+        -- \s*(?:;|{)                   : ends with ';' or '{'
+        local pattern = [[(?s)^\s*(?:(?:static|inline|virtual|constexpr)\s+)*[\w:<>~*&\s]+]] ..
+            word .. [[\s*\([^)]*\)\s*(?:;|{)]]
+        require("telescope.builtin").live_grep({
+            cwd = vim.fn.getcwd(),
+            default_text = pattern,
+            additional_args = function()
+                return { "-z", "--pcre2" }
+            end,
+            search_dirs = project_search_dirs(),
+        })
+    end)
+
+-- Grep MACRO use signature "<#define/#if/...> <cword>" for word under cursor
+map("n", "<LEADER>pm",
+    function()
+        local word = vim.fn.expand("<cword>");
+        local pattern = [[#\w+\s]] .. word;
+        require("telescope.builtin").live_grep({
+            cwd = vim.fn.getcwd(),
+            default_text = pattern,
+            search_dirs = project_search_dirs(),
+        })
+    end)
+
+-- Grep MACRO definition "#define <cword>" for word under cursor
+map("n", "<LEADER>pM",
+    function()
+        local word = vim.fn.expand("<cword>");
+        local pattern = "#define " .. word;
+        require("telescope.builtin").live_grep({
+            cwd = vim.fn.getcwd(),
+            default_text = pattern,
+            search_dirs = project_search_dirs(),
+        })
+    end)

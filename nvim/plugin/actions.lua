@@ -1,4 +1,7 @@
--- Current format state, enabled on start
+local map = require('utils').map
+
+--------------------------------------------------------------------------------
+-- Toggle formatting on a file (default on)
 local formatToggleState = true
 
 -- Format the file before it is written
@@ -14,9 +17,8 @@ vim.api.nvim_create_autocmd('BufWritePre', {
     callback = formatToggle
 })
 
-function vim.g.toggleFormat(state)
-    print("Input state, current state: ", state, formatToggleState)
-    if ((state ~= nil) and state) or (not formatToggleState) then
+local toggleFormat = function()
+    if not formatToggleState then
         formatToggleState = true
         print("Format enabled!")
     else
@@ -25,6 +27,12 @@ function vim.g.toggleFormat(state)
     end
 end
 
+map("n", "<F10>", function() toggleFormat() end,
+    { desc = "Toggle file on-save format (default on)" })
+map("i", "<F10>", function() toggleFormat() end,
+    { desc = "Toggle file on-save format (default on)" })
+
+--------------------------------------------------------------------------------
 -- Reload file when it has changed
 vim.api.nvim_create_autocmd({ 'VimEnter', 'FocusGained', 'BufEnter' }, {
     group = vim.api.nvim_create_augroup('ReloadFileOnChange', {}),

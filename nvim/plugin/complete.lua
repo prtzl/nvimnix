@@ -2,8 +2,8 @@
 local cmp = require 'cmp'
 local select_opts = { behavior = cmp.SelectBehavior.Select }
 local luasnip = require 'luasnip'
-require('luasnip/loaders/from_vscode').lazy_load()
 local lspkind = require 'lspkind'
+local map = require('utils').map
 
 local has_words_before = function()
     local _, col = unpack(vim.api.nvim_win_get_cursor(0))
@@ -235,21 +235,22 @@ vim.lsp.config.clangd = {
 }
 
 vim.g.lsp_state = false
-vim.keymap.set('n', '<F5>', function()
-    local ft = vim.bo.filetype
-    if vim.tbl_contains({ "c", "cpp", "h", "hpp" }, ft) then
-        if vim.g.lsp_state == false then
-            vim.g.lsp_state = true
-            vim.lsp.enable('clangd', true)
+map('n', '<F9>', function()
+        local ft = vim.bo.filetype
+        if vim.tbl_contains({ "c", "cpp", "h", "hpp" }, ft) then
+            if vim.g.lsp_state == false then
+                vim.g.lsp_state = true
+                vim.lsp.enable('clangd', true)
+            else
+                vim.g.lsp_state = false
+                vim.lsp.enable('clangd', false)
+            end
+            vim.notify("clangd started for " .. ft)
         else
-            vim.g.lsp_state = false
-            vim.lsp.enable('clangd', false)
+            vim.notify("clangd not started: unsupported filetype " .. ft, vim.log.levels.WARN)
         end
-        vim.notify("clangd started for " .. ft)
-    else
-        vim.notify("clangd not started: unsupported filetype " .. ft, vim.log.levels.WARN)
-    end
-end)
+    end,
+    { desc = "Toggle LSP for Clangd on/off (default off)" })
 
 -- Nix LSP
 require "lspconfig".nil_ls.setup({
@@ -311,4 +312,49 @@ require "lsp_signature".setup({
     hint_enable = false,
     toggle_key = '<C-s>',          -- toggle signalture
     select_signature_key = '<C-l>' -- switch signatures
+})
+
+
+-- Keybingins
+-- Only declare them when attached to the buffer (if any are used globaly, I guess they get overriden
+local map = require('utils').map
+vim.api.nvim_create_autocmd('LspAttach', {
+    desc = 'LSP actions',
+    callback = function()
+        -- Displays hover information about the symbol under the cursor
+        map('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>')
+
+        -- Jump to the definition
+        map('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>')
+
+        -- Jump to declaration
+        map('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>')
+
+        -- Lists all the implementations for the symbol under the cursor
+        map('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>')
+
+        -- Jumps to the definition of the type symbol
+        map('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>')
+
+        -- Lists all the references
+        map('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>')
+
+        -- Displays a function's signature information
+        map('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>')
+
+        -- Renames all references to the symbol under the cursor
+        map('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>')
+
+        -- Selects a code action available at the current cursor position
+        map('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>')
+
+        -- Show diagnostics in a floating window
+        map('n', 'gl', '<cmd>lua vim.diagnostic.open_float()<cr>')
+
+        -- Move to the previous diagnostic
+        map('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<cr>')
+
+        -- Move to the next diagnostic
+        map('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<cr>')
+    end
 })
