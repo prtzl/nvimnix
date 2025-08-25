@@ -1,4 +1,7 @@
-require("nvim-tree").setup {
+local nvimtree = require('nvim-tree')
+local map = require('utils').map
+
+nvimtree.setup {
     update_focused_file = {
         enable = true,
         update_cwd = true,
@@ -54,3 +57,6 @@ require("nvim-tree").setup {
         },
     },
 }
+
+-- nvim tree view
+map("n", "<C-t>", ":NvimTreeFindFile<CR>", { desc = "nvim-tree toggle" })

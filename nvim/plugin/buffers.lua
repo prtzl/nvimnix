@@ -1,3 +1,5 @@
+local map = require('utils').map
+
 local mru_buffers = {}
 local current_index = 1
 local cycling = false
@@ -54,7 +56,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
     end,
 })
 
-function vim.g.cycle_mru(forward)
+local cycle_mru = function(forward)
     clean_mru()
     if #mru_buffers < 2 then return end
 
@@ -75,3 +77,7 @@ function vim.g.cycle_mru(forward)
     vim.api.nvim_set_current_buf(buf_to_go)
     cycling = false
 end
+
+-- Move back and forth between buffers based on last used
+map("n", "]]", function() cycle_mru(false) end, { desc = "Cycle next buffer by usage - Forward" })
+map("n", "[[", function() cycle_mru(true) end, { desc = "Cycle next buffer by usage - Backward" })
