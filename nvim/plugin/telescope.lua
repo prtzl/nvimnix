@@ -239,17 +239,7 @@ map("n", "<LEADER>pD",
         -- INFO: this pattern skips two-line function def/dec where return type is on separate line
         -- INFO: It can be made to include them by chaning the last + to *. This then also finds some commented function calls
         -- since they look like commented two line (line commented) function declarations/definitions
-        -- local pattern = [[(((^(\s*)[/\-#*]{1,2}\s*|^)(\w+\s+)+)|^)]] .. word .. [[\(.*\)\s*;*({?(.*)*}?)*]];
-
-        -- Pattern explanation:
-        -- ^\s*                        : start of line + optional spaces
-        -- (?:static|inline|virtual|constexpr)? : optional qualifiers
-        -- [\w:<>~*&\s]+               : return type (including pointers, templates, destructors)
-        -- word                         : function name
-        -- \s*\([^)]*\)                 : argument list (non-greedy, single line)
-        -- \s*(?:;|{)                   : ends with ';' or '{'
-        local pattern = [[(?s)^\s*(?:(?:static|inline|virtual|constexpr)\s+)*[\w:<>~*&\s]+]] ..
-            word .. [[\s*\([^)]*\)\s*(?:;|{)]]
+        local pattern = [[(((^(\s*)[/\-#*]{1,2}\s*|^)(\w+\s+)+)|^)]] .. word .. [[\(.*\)\s*;*({?(.*)*}?)*]];
         require("telescope.builtin").live_grep({
             cwd = vim.fn.getcwd(),
             default_text = pattern,
