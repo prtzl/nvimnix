@@ -19,7 +19,7 @@ vim.cmd('colorscheme base16-da-one-ocean')
 -- Overrides
 -- Override background to inherit terminal one
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
--- vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" }) -- with the theme its' nt that bad
+vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" }) -- don't change bg color when switching to inactive windows
 
 -- Transparent complete
 vim.api.nvim_set_hl(0, "CmpItemAbbr", { cternbg = nil, bg = nil })
