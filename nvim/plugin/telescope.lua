@@ -79,8 +79,8 @@ local live_multigrep = function(opts)
                     pattern = opts.shortcuts[prompt_split[2]]
                 else
                     -- Automatically interpret as file extension if it doesn't already have a wildcard
-                    if not prompt_split[2]:match("[*{}]") then
-                        pattern = "*." .. prompt_split[2]
+                    if not prompt_split[2]:match("{[*]}") then
+                        pattern = "*.{" .. prompt_split[2] .. "}"
                     else
                         pattern = prompt_split[2]
                     end
@@ -216,7 +216,7 @@ map("n", "<leader>pl", require("telescope.builtin").current_buffer_fuzzy_find,
 map("n", "<LEADER>ps",
     function()
         local word = vim.fn.expand("<cword>");
-        require("telescope.builtin").live_grep({
+        live_multigrep({
             cwd = vim.fn.getcwd(),
             default_text = word,
             search_dirs = project_search_dirs(),
@@ -232,8 +232,8 @@ map("n", "<LEADER>pd",
         -- INFO: this pattern also finds two-line function def/dec where return type is on separate line
         -- INFO: It can exclude them by modifying third or parameter to search for commented lines without anything in front, maybe
         -- local pattern = [[(\s?,?\w\s*=\s*|^\s+|.*[/\-#*]{1,2}\s*)]] .. word .. [[[\(.*\)]?]];
-        local pattern = word .. [[\s*\(]]
-        require("telescope.builtin").live_grep({
+        local pattern = word .. [[\s*\(]] .. "  c,cpp,h,hpp"
+        live_multigrep({
             cwd = vim.fn.getcwd(),
             default_text = pattern,
             search_dirs = project_search_dirs(),
@@ -247,7 +247,7 @@ map("n", "<LEADER>pD",
         -- INFO: this pattern skips two-line function def/dec where return type is on separate line
         -- INFO: It can be made to include them by chaning the last + to *. This then also finds some commented function calls
         -- since they look like commented two line (line commented) function declarations/definitions
-        local pattern = [[(((^(\s*)[/\-#*]{1,2}\s*|^)(\w+\s+)+)|^)]] .. word .. [[\(.*\)\s*;*({?(.*)*}?)*]];
+        local pattern = [[(((^(\s*)[/\-#*]{1,2}\s*|^)(\w+\s+)+)|^)]] .. word .. [[\(.*\)\s*;*({?(.*)*}?)*]]
         require("telescope.builtin").live_grep({
             cwd = vim.fn.getcwd(),
             default_text = pattern,
@@ -262,8 +262,8 @@ map("n", "<LEADER>pD",
 map("n", "<LEADER>pm",
     function()
         local word = vim.fn.expand("<cword>");
-        local pattern = [[#\w+\s]] .. word;
-        require("telescope.builtin").live_grep({
+        local pattern = [[#\w+\s]] .. word .. "  c,cpp,h,hpp";
+        live_multigrep({
             cwd = vim.fn.getcwd(),
             default_text = pattern,
             search_dirs = project_search_dirs(),
@@ -274,8 +274,8 @@ map("n", "<LEADER>pm",
 map("n", "<LEADER>pM",
     function()
         local word = vim.fn.expand("<cword>");
-        local pattern = "#define " .. word;
-        require("telescope.builtin").live_grep({
+        local pattern = "#define " .. word .. "  c,cpp,h,hpp";
+        live_multigrep({
             cwd = vim.fn.getcwd(),
             default_text = pattern,
             search_dirs = project_search_dirs(),
