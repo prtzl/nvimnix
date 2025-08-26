@@ -37,6 +37,8 @@ telescope.setup {
 -- Actually use the extension for performance gainz (havent's noticed any issues until now tho ...)
 require('telescope').load_extension('fzf')
 
+--------------------------------------------------------------------------------
+
 -- From TJ DevRies: live grep, but separating pattern with double space makes rg match file as well with second argument
 local live_multigrep = function(opts)
     opts = opts or {}
@@ -83,6 +85,10 @@ local live_multigrep = function(opts)
                 end
 
                 table.insert(args, string.format(opts.pattern, pattern))
+            end
+
+            if opts.search_dirs then
+                vim.list_extend(args, opts.search_dirs)
             end
 
             return flatten {
@@ -183,7 +189,7 @@ map("n", "<leader>pf", function()
     { desc = "Find files (Telescope)" })
 
 -- Find all files
-map("n", "<C-a>", function()
+map("n", "<leader>pa", function()
         require("telescope.builtin").find_files({
             cwd = vim.fn.getcwd(),
             hidden = true,
