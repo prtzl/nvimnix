@@ -1,4 +1,3 @@
-local telescope = require 'telescope'
 local actions = require 'telescope.actions'
 local builtin = require 'telescope.builtin'
 local pickers = require 'telescope.pickers'
@@ -10,27 +9,29 @@ local flatten = vim.tbl_flatten
 
 local map = require('utils').map
 
-telescope.setup {
+require('telescope').setup {
     defaults = {
-        layout_strategy = 'horizontal',
+        layout_strategy = "vertical",
         layout_config = {
-            width = 0.99,
-            prompt_position = 'top',
-            preview_width = 0.5,
-            horizontal = {
-                wrap = true,
-            },
+            width = 0.9,
+            height = 0.9,
+            prompt_position = "top",
+            -- anchor = "S",         -- this moves it down. Kind of like center now ...
+            preview_height = 0.6, -- fraction of total height for preview
+            preview_cutoff = 1,   -- always show preview, but let it shrink
         },
-        sorting_strategy = 'ascending',
-        border = true,
+        sorting_strategy = "ascending",
         mappings = {
             i = {
-                ["<esc>"] = actions.close,
+                ["<esc>"] = require("telescope.actions").close,
                 ["<c-u>"] = false,
-            }
+            },
         },
         path_display = { "truncate" },
         dynamic_preview_title = true,
+        preview = {
+            filesize_limit = 5, -- MB
+        },
     },
 }
 
@@ -42,6 +43,7 @@ require('telescope').load_extension('fzf')
 -- From TJ DevRies: live grep, but separating pattern with double space makes rg match file as well with second argument
 local live_multigrep = function(opts)
     opts = opts or {}
+
     opts.cwd = opts.cwd and vim.fn.expand(opts.cwd) or vim.loop.cwd()
     opts.shortcuts = opts.shortcuts
         or {
@@ -93,7 +95,7 @@ local live_multigrep = function(opts)
 
             return flatten {
                 args,
-                { "--color=never", "--no-heading", "--with-filename", "--line-number", "--column", "--smart-case" },
+                { "--color=never", "--no-heading", "--with-filename", "--line-number", "--column", "--smart-case", "--trim" },
             }
         end,
         entry_maker = make_entry.gen_from_vimgrep(opts),
