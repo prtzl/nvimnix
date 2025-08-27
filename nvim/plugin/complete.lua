@@ -313,12 +313,11 @@ require "lsp_signature".setup({
 
 -- Keybingins
 -- Only declare them when attached to the buffer (if any are used globaly, I guess they get overriden
-local map = require('utils').map
 vim.api.nvim_create_autocmd('LspAttach', {
     desc = 'LSP actions',
     callback = function()
         -- Displays hover information about the symbol under the cursor
-        map('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>')
+        map('n', 'gh', '<cmd>lua vim.lsp.buf.hover()<cr>')
 
         -- Jump to the definition
         map('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>')
