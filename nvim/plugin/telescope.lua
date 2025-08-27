@@ -1,4 +1,3 @@
-local actions = require 'telescope.actions'
 local builtin = require 'telescope.builtin'
 local pickers = require 'telescope.pickers'
 local finders = require 'telescope.finders'
@@ -33,6 +32,14 @@ require('telescope').setup {
             filesize_limit = 5, -- MB
         },
     },
+    extensions = {
+        fzf = {
+            fuzzy = true,                   -- enable fuzzy matching
+            override_file_sorter = true,    -- override default file sorter
+            override_generic_sorter = true, -- override generic sorter
+            case_mode = "smart_case",
+        }
+    }
 }
 
 -- Actually use the extension for performance gainz (havent's noticed any issues until now tho ...)
