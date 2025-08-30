@@ -18,7 +18,7 @@
         lazygit
         nil # nix lsp
         nixfmt-rfc-style
-        python312Packages.python-lsp-server # python lsp
+        python313Packages.python-lsp-server # python lsp
         ripgrep
         sumneko-lua-language-server # lua lsp
         texlab # latex lsp
