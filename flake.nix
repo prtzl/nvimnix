@@ -97,7 +97,7 @@
         name = "nvim";
         runtimeInputs = commonPackages ++ [ myNeovim ];
         text = ''
-          nvim "$@"
+          exec nvim "$@"
         '';
       };
 
@@ -114,21 +114,10 @@
         {
           options.programs.nvimnix = {
             enable = lib.mkEnableOption "Enable nvimnix (Neovim wrapper)";
-            # config = lib.mkOption {
-            #   type = lib.types.enum [ "home" "nixos" null ];
-            #   default = null;
-            # };
           };
 
           config = lib.mkIf config.programs.nvimnix.enable (
             lib.mkMerge [
-              # ({
-              #   assertions = [{
-              #     assertion = config.programs.nvimnix.config != null;
-              #     message =
-              #       ''nvimnix: Select "home" or "nixos" in `nvimnix.config`!'';
-              #   }];
-              # })
               (
                 if (moduleType == "nixos") then
                   {
