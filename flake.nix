@@ -135,8 +135,8 @@
       {
         formatter = pkgs.nixfmt-tree;
         packages.default = wrappedNeovim;
-        nixosModules.nvimnix = nixosModule;
-        homeManagerModules.nvimnix = homeModule;
+        nixosModules.default = nixosModule;
+        homeManagerModules.default = homeModule;
       }
     );
 }
