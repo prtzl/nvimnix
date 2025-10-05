@@ -211,22 +211,23 @@ capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 -- C/C++
 vim.lsp.enable('clangd', false)
-vim.lsp.config.clangd = {
-    cmd = {
-        'clangd',
-        '--all-scopes-completion',
-        '--background-index',
-        '--clang-tidy',
-        '--compile-commands-dir=build',
-        '--completion-style=detailed',
-        '--function-arg-placeholders',
-        '--header-insertion-decorators',
-        '--header-insertion=never',
-    },
-    root_markers = { '.clangd', 'compile_commands.json' },
-    filetypes = { "c", "cpp", "h", "hpp" },
-    -- root_dir = root_dir,
-}
+vim.lsp.config('clangd',
+    {
+        cmd = {
+            'clangd',
+            '--all-scopes-completion',
+            '--background-index',
+            '--clang-tidy',
+            '--compile-commands-dir=build',
+            '--completion-style=detailed',
+            '--function-arg-placeholders',
+            '--header-insertion-decorators',
+            '--header-insertion=never',
+        },
+        root_markers = { '.clangd', 'compile_commands.json' },
+        filetypes = { "c", "cpp", "h", "hpp" },
+        -- root_dir = root_dir,
+    })
 
 local clangdLspState = false
 map('n', '<F11>', function()
@@ -234,11 +235,11 @@ map('n', '<F11>', function()
         if vim.tbl_contains({ "c", "cpp", "h", "hpp" }, ft) then
             if clangdLspState == false then
                 clangdLspState = true
-                vim.lsp.enable('clangd', true)
+                vim.lsp.enable('clangd')
                 vim.notify("Clangd enabled")
             else
                 clangdLspState = false
-                vim.lsp.enable('clangd', false)
+                vim.lsp.disable('clangd')
                 vim.notify("Clangd disabled")
             end
             vim.notify("clangd started for " .. ft)
@@ -249,59 +250,67 @@ map('n', '<F11>', function()
     { desc = "Toggle LSP for Clangd on/off (default off)" })
 
 -- Nix LSP
-require "lspconfig".nil_ls.setup({
-    autostart = true,
-    capabilities = capabilities,
-    filetypes = { 'nix' },
-    settings = {
-        ['nil'] = {
-            formatting = {
-                command = { "nixfmt" },
+vim.lsp.enable('nil_ls')
+vim.lsp.config('nil_ls',
+    {
+        autostart = true,
+        capabilities = capabilities,
+        filetypes = { 'nix' },
+        settings = {
+            ['nil'] = {
+                formatting = {
+                    command = { "nixfmt" },
+                }
             }
-        }
 
-    }
-})
+        }
+    })
 
 -- latex lsp
-require "lspconfig".texlab.setup({
-    autostart = true,
-    capabilities = capabilities,
-})
+vim.lsp.enable('texlab')
+vim.lsp.config('texlab',
+    {
+        autostart = true,
+        capabilities = capabilities,
+    })
 
 -- Python LSP
-require "lspconfig".pylsp.setup({
-    autostart = true,
-    capabilities = capabilities,
-})
+vim.lsp.enable('pylsp')
+vim.lsp.config('pylsp',
+    {
+        autostart = true,
+        capabilities = capabilities,
+    })
 
 -- lua LSP
-require "lspconfig".lua_ls.setup({
-    autostart = true,
-    capabilities = capabilities,
-    settings = {
-        Lua = {
-            runtime = {
-                version = "LuaJIT",
-            },
-            diagnostics = {
-                globals = { 'vim' }, -- Recognize 'vim' as a global variable
-            },
-            workspace = {
-                library = {
-                    vim.fn.stdpath("config") .. "/lua",  -- Only your config files
-                    vim.fn.stdpath("data") .. "/plugin", -- If using lazy.nvim, include its plugins
+vim.lsp.enable('lua_ls')
+vim.lsp.config('lua_ls',
+    {
+        autostart = true,
+        capabilities = capabilities,
+        settings = {
+            Lua = {
+                runtime = {
+                    version = "LuaJIT",
                 },
-                checkThirdParty = false,                 -- Prevents unnecessary warnings
-                maxPreload = 1000,                       -- Limits the number of preloaded files
-                preloadFileSize = 200,                   -- Limits the size of preloaded files (in KB)
-            },
-            telemetry = {
-                enable = false, -- Disable telemetry for extra speed
+                diagnostics = {
+                    globals = { 'vim' }, -- Recognize 'vim' as a global variable
+                },
+                workspace = {
+                    library = {
+                        vim.fn.stdpath("config") .. "/lua",  -- Only your config files
+                        vim.fn.stdpath("data") .. "/plugin", -- If using lazy.nvim, include its plugins
+                    },
+                    checkThirdParty = false,                 -- Prevents unnecessary warnings
+                    maxPreload = 1000,                       -- Limits the number of preloaded files
+                    preloadFileSize = 200,                   -- Limits the size of preloaded files (in KB)
+                },
+                telemetry = {
+                    enable = false, -- Disable telemetry for extra speed
+                },
             },
         },
-    },
-})
+    })
 
 -- lsp signature - function signature
 require "lsp_signature".setup({
