@@ -8,11 +8,21 @@ nvimtree.setup {
     },
     git = {
         enable = true,
-        ignore = false,
     },
     view = {
         width = 30,
         adaptive_size = true,
+    },
+    filters = {
+        enable = true,
+        git_ignored = true,
+        dotfiles = false,
+        custom = {
+            ".direnv",
+            ".git",
+            "result",
+            "result-man",
+        },
     },
     renderer = {
         icons = {
