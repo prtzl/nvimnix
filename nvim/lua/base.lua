@@ -1,3 +1,5 @@
+local map = require('utils').map
+
 -- Base gui
 vim.g.mapleader = " "
 vim.opt.cursorline = true
@@ -84,14 +86,3 @@ vim.g.cpp_member_variable_highlight = 1
 -- Prevent strange file save behaviour.
 -- https://github.com/srid/emanote/issues/180
 vim.opt.backupcopy = 'yes'
-
--- In my way nowdays, but let's leave it here
--- Can't be bothered to port
--- vim.cmd([[
---     " Print opened file in tmux bar
---     if exists('$TMUX')
---       let windowName = system("tmux display-message -p '#W'")
---       autocmd BufReadPost,FileReadPost,BufNewFile,BufEnter * call system("tmux rename-window 'nvim(" . expand("%:t") . ")'")
---       autocmd VimLeave * call system("tmux rename-window " . windowName)
---     endif
--- ]])
