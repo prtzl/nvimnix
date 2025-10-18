@@ -148,7 +148,15 @@
         homeManagerModules.default = makeModule "home";
       };
 
-      systems = [ "x86_64-linux" ];
+      # systems = nixpkgs.legacyPackages.x86_64-linux.neovim.meta.platforms;
+      # so neovim derivation has meta.platforms = lib.platforms.all;
+      # This causes issues with pkgs not being available for some, like aarch64-freebsd
+      # Just define main platforms that a normal person would use (for now)
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "aarch64-darwin"
+      ];
 
       perSystem =
         { pkgs, system, ... }:
