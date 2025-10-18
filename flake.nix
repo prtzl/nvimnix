@@ -8,20 +8,10 @@
 
   outputs =
     inputs@{ nixpkgs, flake-parts, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } rec {
-
-      flake = {
-        # nixosModules.default = nixosModule;
-        # homeManagerModules.default = homeModule;
-      };
-
-      systems = [ "x86_64-linux" ];
-
-      perSystem =
-        { pkgs, system, ... }:
+    let
+      makeNeovim =
+        pkgs:
         let
-          pkgs = nixpkgs.legacyPackages.${system};
-
           commonPackages = with pkgs; [
             bat
             git
@@ -94,53 +84,85 @@
 
           myNeovim = pkgs.wrapNeovimUnstable pkgs.neovim-unwrapped myNeovimConfig;
 
+          # I need to wrap my neovim in shell script so that common packages needed at runtime are available
           wrappedNeovim = pkgs.writeShellApplication {
             name = "nvim";
             runtimeInputs = commonPackages ++ [ myNeovim ];
             text = ''exec nvim "$@"'';
           };
+        in
+        wrappedNeovim;
 
-          # Ok so I could NOT select either home or nixos with option and switch the lazy if for either or.
-          # Got only infinite recursion. Damn, so let's do this the manual way.
-          makeModule =
-            moduleType:
-            {
-              config,
-              lib,
-              pkgs,
-              ...
-            }:
-            {
-              options.programs.nvimnix = {
-                enable = lib.mkEnableOption "Enable nvimnix (Neovim wrapper)";
-              };
-              config = lib.mkIf config.programs.nvimnix.enable (
-                lib.mkMerge [
-                  (
-                    if (moduleType == "nixos") then
-                      {
-                        environment.systemPackages = [ wrappedNeovim ];
-                      }
-                    else
-                      { }
-                  )
-                  (
-                    if (moduleType == "home") then
-                      {
-                        home.packages = [ wrappedNeovim ];
-                      }
-                    else
-                      { }
-                  )
-                ]
-              );
+      makeModule =
+        moduleType:
+        {
+          config,
+          lib,
+          pkgs,
+          ...
+        }:
+        {
+          options.programs.nvimnix = {
+            enable = lib.mkEnableOption "Enable nvimnix (Neovim wrapper)";
+            useModulePkgs = lib.mkOption {
+              default = true;
+              example = false;
+              description = "Use this flake's pkgs instead of host pkgs";
+              type = lib.types.bool;
             };
+          };
+          config =
+            let
+              nvim-pkgs =
+                if config.programs.nvimnix.useModulePkgs then nixpkgs.legacyPackages.${pkgs.system} else pkgs;
+            in
+            lib.mkIf config.programs.nvimnix.enable (
+              lib.mkMerge [
+                (
+                  if (moduleType == "nixos") then
+                    {
+                      # make sure that system-wide neovim is disabled when including this one
+                      programs.neovim.enable = lib.mkForce false;
+                      environment.systemPackages = [ (makeNeovim nvim-pkgs) ];
+                    }
+                  else
+                    { }
+                )
+                (
+                  if (moduleType == "home") then
+                    {
+                      # make sure that system-wide neovim is disabled when including this one
+                      programs.neovim.enable = lib.mkForce false;
+                      home.packages = [ (makeNeovim nvim-pkgs) ];
+                    }
+                  else
+                    { }
+                )
+              ]
+            );
+        };
+    in
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      flake =
+        let
           nixosModule = makeModule "nixos";
           homeModule = makeModule "home";
         in
         {
+          nixosModules.default = nixosModule;
+          homeManagerModules.default = homeModule;
+        };
+
+      systems = [ "x86_64-linux" ];
+
+      perSystem =
+        { pkgs, system, ... }:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        {
           formatter = pkgs.nixfmt-tree;
-          packages.default = wrappedNeovim;
+          packages.default = makeNeovim pkgs;
         };
     };
 }
