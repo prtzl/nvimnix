@@ -143,15 +143,10 @@
         };
     in
     flake-parts.lib.mkFlake { inherit inputs; } {
-      flake =
-        let
-          nixosModule = makeModule "nixos";
-          homeModule = makeModule "home";
-        in
-        {
-          nixosModules.default = nixosModule;
-          homeManagerModules.default = homeModule;
-        };
+      flake = {
+        nixosModules.default = makeModule "nixos";
+        homeManagerModules.default = makeModule "home";
+      };
 
       systems = [ "x86_64-linux" ];
 
