@@ -1,5 +1,3 @@
-local map = require('utils').map
-
 -- Base gui
 vim.g.mapleader = " "
 vim.opt.cursorline = true

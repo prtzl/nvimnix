@@ -4,7 +4,7 @@ local map = require('utils').map
 nvimtree.setup {
     update_focused_file = {
         enable = true,
-        update_cwd = true, -- I don't know man
+        update_cwd = false, -- I don't know man
     },
     git = {
         enable = true,
