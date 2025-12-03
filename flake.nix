@@ -73,33 +73,25 @@
 
         ];
 
-        # Custom Neovim package with built-in dotfiles
-        # Missing a way to bring it's own external tools, like ripgrep and git ...
-        myNeovim = pkgs.neovim.override {
-          configure = {
-            packages.myVimPackage = {
-              start = neovimPlugins; # Load all plugins on start
-              opt = [ ]; # No optional plugins
-            };
-            customRC = ''
-              set runtimepath+=${./nvim}
-              if filereadable(expand("${./nvim/init.vim}"))
-                source ${./nvim/init.vim}
-              endif
-              if filereadable(expand("${./nvim/init.lua}"))
-                source ${./nvim/init.lua}
-              endif
-            '';
-          };
+        myNeovimConfig = pkgs.neovimUtils.makeNeovimConfig {
+          plugins = neovimPlugins;
+          customRC = ''
+            set runtimepath+=${./nvim}
+            if filereadable(expand("${./nvim/init.vim}"))
+              source ${./nvim/init.vim}
+            endif
+            if filereadable(expand("${./nvim/init.lua}"))
+              source ${./nvim/init.lua}
+            endif
+          '';
         };
 
-        # Very cowboy approach but it works
+        myNeovim = pkgs.wrapNeovimUnstable pkgs.neovim-unwrapped myNeovimConfig;
+
         wrappedNeovim = pkgs.writeShellApplication {
           name = "nvim";
           runtimeInputs = commonPackages ++ [ myNeovim ];
-          text = ''
-            exec nvim "$@"
-          '';
+          text = ''exec nvim "$@"'';
         };
 
         # Ok so I could NOT select either home or nixos with option and switch the lazy if for either or.
@@ -116,7 +108,6 @@
             options.programs.nvimnix = {
               enable = lib.mkEnableOption "Enable nvimnix (Neovim wrapper)";
             };
-
             config = lib.mkIf config.programs.nvimnix.enable (
               lib.mkMerge [
                 (
