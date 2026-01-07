@@ -17,10 +17,10 @@
             git
             lazygit
             nil # nix lsp
-            nixfmt-rfc-style
+            nixfmt
             python313Packages.python-lsp-server # python lsp
             ripgrep
-            sumneko-lua-language-server # lua lsp
+            lua-language-server # lua lsp
             texlab # latex lsp
             tree-sitter
           ];
@@ -114,7 +114,10 @@
           config =
             let
               nvim-pkgs =
-                if config.programs.nvimnix.useModulePkgs then nixpkgs.legacyPackages.${pkgs.system} else pkgs;
+                if config.programs.nvimnix.useModulePkgs then
+                  nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system}
+                else
+                  pkgs;
             in
             lib.mkIf config.programs.nvimnix.enable (
               lib.mkMerge [
