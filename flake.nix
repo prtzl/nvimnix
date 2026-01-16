@@ -47,7 +47,6 @@
             vim-asterisk # More options on *
             vim-cpp-enhanced-highlight # better looking cpp highlighting
             vim-fugitive # Git tool
-            vim-latex-live-preview # preview latex pdf inside editor
             vim-visual-multi # Multiline select, so good
 
             # LSP stuff
