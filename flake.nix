@@ -22,7 +22,6 @@
             ripgrep
             lua-language-server # lua lsp
             texlab # latex lsp
-            tree-sitter
           ];
 
           # List of Neovim plugins (installed via nixpkgs)
@@ -38,7 +37,8 @@
             mini-surround # put a symbol around a word
             nvim-autopairs # autopair braces
             nvim-tree-lua # file tree
-            nvim-treesitter.withAllGrammars # syntax for everything
+            nvim-treesitter-legacy
+            nvim-treesitter-legacy.withAllGrammars # syntax for everything
             nvim-web-devicons # icons
             rainbow-delimiters-nvim # explains it
             telescope-frecency-nvim # Telescope plugin for searching most used files
