@@ -89,7 +89,7 @@
             runtimeInputs = commonPackages ++ [ myNeovim ];
             text = ''
               # give lazygit config file location
-              export LG_CONFIG_FILE="${./lazygit-config.yml}"
+              export LG_CONFIG_FILE="${lazygit-settings-yml pkgs}"
               exec nvim "$@"
             '';
           };
@@ -147,9 +147,24 @@
               ]
             );
         };
+
+      lazygit-settings = {
+        gui = {
+          theme = {
+            selectedLineBgColor = [ "#3b3c4d" ];
+            selectedLineFgColor = [ "#ffffff" ];
+            activeBorderColor = [ "#89b4fa" ];
+            inactiveBorderColor = [ "#6c7086" ];
+            optionsTextColor = [ "#89b4fa" ];
+          };
+        };
+      };
+      lazygit-settings-yml =
+        pkgs: (pkgs.writeText "lazygit-config.yml" "${pkgs.lib.generators.toYAML { } lazygit-settings}");
     in
     flake-parts.lib.mkFlake { inherit inputs; } {
       flake = {
+        inherit lazygit-settings;
         nixosModules.default = makeModule "nixos";
         homeManagerModules.default = makeModule "home";
       };
