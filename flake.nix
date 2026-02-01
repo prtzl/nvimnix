@@ -164,10 +164,14 @@
         { pkgs, system, ... }:
         let
           pkgs = nixpkgs.legacyPackages.${system};
+          neovim = makeNeovim pkgs;
         in
         {
           formatter = pkgs.nixfmt-tree;
-          packages.default = makeNeovim pkgs;
+          packages.default = neovim;
+          devShells.default = pkgs.mkShellNoCC {
+            nativeBuildInputs = [ neovim ];
+          };
         };
     };
 }
