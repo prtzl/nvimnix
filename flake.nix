@@ -87,7 +87,11 @@
           wrappedNeovim = pkgs.writeShellApplication {
             name = "nvim";
             runtimeInputs = commonPackages ++ [ myNeovim ];
-            text = ''exec nvim "$@"'';
+            text = ''
+              # give lazygit config file location
+              export LG_CONFIG_FILE="${./lazygit-config.yml}"
+              exec nvim "$@"
+            '';
           };
         in
         wrappedNeovim;
