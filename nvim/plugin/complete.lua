@@ -360,5 +360,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
         -- Move to the next diagnostic
         map('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<cr>')
+
+        -- Navigate quickfix list as "references"
+        map('n', ']r', '<cmd>cnext<cr>')
+        map('n', '[r', '<cmd>cprev<cr>')
     end
 })
