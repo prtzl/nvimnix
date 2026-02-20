@@ -48,6 +48,7 @@
             vim-cpp-enhanced-highlight # better looking cpp highlighting
             vim-fugitive # Git tool
             vim-visual-multi # Multiline select, so good
+            toggleterm-nvim
 
             # LSP stuff
             cmp-buffer
