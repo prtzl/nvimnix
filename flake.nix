@@ -150,6 +150,9 @@
         };
 
       lazygit-settings = {
+        git = {
+          autoFetch = false;
+        };
         gui = {
           theme = {
             selectedLineBgColor = [ "#3b3c4d" ];
