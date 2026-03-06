@@ -220,13 +220,17 @@ vim.lsp.config('clangd',
             '--clang-tidy',
             '--compile-commands-dir=build',
             '--completion-style=detailed',
-            '--function-arg-placeholders',
+            '--function-arg-placeholders=true',
             '--header-insertion-decorators',
             '--header-insertion=never',
+            '--query-driver=/nix/store/*/bin/arm-none-eabi-*',
         },
-        root_markers = { '.clangd', 'compile_commands.json' },
-        filetypes = { "c", "cpp", "h", "hpp" },
-        -- root_dir = root_dir,
+        root_dir = vim.fs.root(0, {
+            '.clangd',
+            '.git',
+            'build',
+            'compile_commands.json',
+        }),
     })
 
 local clangdLspState = false
