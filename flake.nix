@@ -99,7 +99,7 @@
             runtimeInputs = commonPackages ++ [ myNeovim ];
             text = ''
               # give lazygit config file location
-              export LG_CONFIG_FILE="${lazygit-settings-yml pkgs}"
+              export LG_CONFIG_FILE="${lazygit-settings-yml}"
               exec nvim "$@"
             '';
           };
