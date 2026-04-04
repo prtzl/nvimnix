@@ -12,6 +12,7 @@
       makeNeovim =
         pkgs:
         let
+          # tools/pacakges required by neovim plugins to operate
           commonPackages = with pkgs; [
             bat
             git
@@ -69,6 +70,7 @@
             plenary-nvim
           ];
 
+          # Generate neovim config structure
           myNeovimConfig = pkgs.neovimUtils.makeNeovimConfig {
             plugins = neovimPlugins;
             customRC = ''
@@ -82,9 +84,16 @@
             '';
           };
 
+          # new neovim with my settings, BUT relies on env to provide "commonPackages"!
           myNeovim = pkgs.wrapNeovimUnstable pkgs.neovim-unwrapped myNeovimConfig;
 
+          # Actual lazygit config file
+          lazygit-settings-yml = pkgs.writeText "lazygit-config.yml" "${pkgs.lib.generators.toYAML { }
+            lazygit-settings
+          }";
+
           # I need to wrap my neovim in shell script so that common packages needed at runtime are available
+          # Also useful to give lazygit config file with a path
           wrappedNeovim = pkgs.writeShellApplication {
             name = "nvim";
             runtimeInputs = commonPackages ++ [ myNeovim ];
@@ -96,6 +105,22 @@
           };
         in
         wrappedNeovim;
+
+      # Lazygit config to be fed on each start (not global :)
+      lazygit-settings = {
+        git = {
+          autoFetch = false;
+        };
+        gui = {
+          theme = {
+            selectedLineBgColor = [ "#3b3c4d" ];
+            selectedLineFgColor = [ "#ffffff" ];
+            activeBorderColor = [ "#89b4fa" ];
+            inactiveBorderColor = [ "#6c7086" ];
+            optionsTextColor = [ "#89b4fa" ];
+          };
+        };
+      };
 
       makeModule =
         moduleType:
@@ -148,23 +173,6 @@
               ]
             );
         };
-
-      lazygit-settings = {
-        git = {
-          autoFetch = false;
-        };
-        gui = {
-          theme = {
-            selectedLineBgColor = [ "#3b3c4d" ];
-            selectedLineFgColor = [ "#ffffff" ];
-            activeBorderColor = [ "#89b4fa" ];
-            inactiveBorderColor = [ "#6c7086" ];
-            optionsTextColor = [ "#89b4fa" ];
-          };
-        };
-      };
-      lazygit-settings-yml =
-        pkgs: (pkgs.writeText "lazygit-config.yml" "${pkgs.lib.generators.toYAML { } lazygit-settings}");
     in
     flake-parts.lib.mkFlake { inherit inputs; } {
       flake = {
