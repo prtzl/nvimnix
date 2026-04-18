@@ -22,6 +22,6 @@ require 'nvim-treesitter.configs'.setup {
     },
 
     indent = {
-        enable = true,
+        enable = false, -- not reliable in 12.0 (18.4.2026)
     },
 }
