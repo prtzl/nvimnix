@@ -239,11 +239,11 @@ map('n', '<F11>', function()
         if vim.tbl_contains({ "c", "cpp", "h", "hpp" }, ft) then
             if clangdLspState == false then
                 clangdLspState = true
-                vim.lsp.enable('clangd')
+                vim.lsp.enable('clangd', true)
                 vim.notify("Clangd enabled")
             else
                 clangdLspState = false
-                vim.lsp.disable('clangd')
+                vim.lsp.enable('clangd', false)
                 vim.notify("Clangd disabled")
             end
             vim.notify("clangd started for " .. ft)
