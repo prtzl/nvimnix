@@ -125,6 +125,7 @@ dap.configurations.c = {
         end,
     }
 }
+dap.configurations.cpp = dap.configurations.c
 
 -------------------------------- DAP UI --------------------------------
 local dapui = require("dapui")
