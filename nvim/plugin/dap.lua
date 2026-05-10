@@ -13,9 +13,29 @@ require('dap-cortex-debug').setup {
     -- },
 }
 
+local arm_gdb = vim.fn.exepath("arm-none-eabi-gdb")
+local arm_toolchain_path = vim.fn.fnamemodify(arm_gdb, ":h")
+
+local M = {}
+M.cached_device = nil
+local function get_device()
+    local device = vim.fn.input({
+        prompt = "Device: ",
+        default = M.cached_device or "",
+    })
+
+    if not device or device == "" then
+        vim.notify("Device is required", vim.log.levels.ERROR)
+        return require("dap").ABORT
+    end
+
+    M.cached_device = device
+    return device
+end
+
 dap.adapters.armgdb = {
     type = "executable",
-    command = "/nix/store/lyw5x085828mzih76llii47bnn7da5f8-gcc-arm-embedded-14.2.rel1/bin/arm-none-eabi-gdb",
+    command = arm_gdb,
     args = { "--interpreter=mi2" }
 }
 
@@ -45,17 +65,31 @@ dap.configurations.c = {
         name = 'Cortex Debug Jlink',
         type = 'cortex-debug',
         request = 'launch',
+
         servertype = 'jlink',
-        serverpath = 'JLinkGDBServerCLExe',
-        gdbPath = 'arm-none-eabi-gdb',
-        toolchainPath = 'nix/store/lyw5x085828mzih76llii47bnn7da5f8-gcc-arm-embedded-14.2.rel1/bin',
+
+        serverpath = vim.fn.exepath("JLinkGDBServerCLExe"),
+        gdbPath = arm_gdb,
+
+        -- FIX 2: absolute toolchain path (important for Nix)
+        toolchainPath = arm_toolchain_path,
+
         toolchainPrefix = 'arm-none-eabi',
-        device = 'STM32F407VG',          -- 👈 ADD THIS (example, must match your chip)
+
+        -- FIX 3: allow override but keep safe default
+        device = get_device,
+
         runToEntryPoint = 'main',
-        swoConfig = { enabled = false }, -- not yet supported
+
+        swoConfig = { enabled = false },
+
         showDevDebugOutput = false,
+
         gdbTarget = 'localhost:2331',
+
         cwd = '${workspaceFolder}',
+
+        -- FIX 4: cleaner ELF picker + path normalization
         executable = function()
             local build_dir = vim.fn.input({
                 prompt = "Build folder: ",
@@ -74,6 +108,11 @@ dap.configurations.c = {
                 return dap.ABORT
             end
 
+            -- FIX 5: normalize paths (important for debugger stability)
+            for i, path in ipairs(elfs) do
+                elfs[i] = vim.fn.fnamemodify(path, ":p")
+            end
+
             if #elfs == 1 then
                 return elfs[1]
             end
@@ -89,18 +128,6 @@ dap.configurations.c = {
 
             return elfs[choice]
         end,
-        -- configFiles = { '${workspaceFolder}/build/openocd/connect.cfg' },
-        -- rttConfig = {
-        --     address = 'auto',
-        --     decoders = {
-        --         {
-        --             label = 'RTT:0',
-        --             port = 0,
-        --             type = 'console'
-        --         }
-        --     },
-        --     enabled = true
-        -- },
     }
 }
 
