@@ -1,4 +1,6 @@
 local dap = require("dap")
+dap.set_log_level('DEBUG')
+print(vim.fn.stdpath('cache'))
 
 local arm_gdb = vim.fn.exepath("arm-none-eabi-gdb")
 local arm_toolchain_path = vim.fn.fnamemodify(arm_gdb, ":h")
@@ -23,6 +25,45 @@ local function get_device()
     return device
 end
 
+local function getExecutable()
+    local build_dir = vim.fn.input({
+        prompt = "Build folder: ",
+        default = "build",
+        completion = "dir",
+    })
+
+    if build_dir == nil or build_dir == "" then
+        build_dir = "build"
+    end
+
+    local elfs = vim.fn.glob(build_dir .. "/*.elf", false, true)
+
+    if #elfs == 0 then
+        vim.notify("No ELF files found in " .. build_dir, vim.log.levels.ERROR)
+        return dap.ABORT
+    end
+
+    -- FIX 5: normalize paths (important for debugger stability)
+    for i, path in ipairs(elfs) do
+        elfs[i] = vim.fn.fnamemodify(path, ":p")
+    end
+
+    if #elfs == 1 then
+        return elfs[1]
+    end
+
+    local choices = vim.deepcopy(elfs)
+    table.insert(choices, 1, "Select ELF file:")
+
+    local choice = vim.fn.inputlist(choices)
+
+    if choice <= 0 or choice > #elfs then
+        return dap.ABORT
+    end
+
+    return elfs[choice]
+end
+
 -------------------------------- DAP settings --------------------------------
 require('dap-cortex-debug').setup {
     debug = false, -- log debug messages
@@ -37,33 +78,37 @@ require('dap-cortex-debug').setup {
     -- },
 }
 
-dap.adapters.armgdb = {
+local home = os.getenv("HOME")
+-- local custom_gdb_dir = home .. "/projects/testing/arm-toolchain/arm-gnu-toolchain-15.2.rel1/binutils-gdb/gdb"
+local custom_gdb_dir = home .. "/projects/git/binutils-gdb/gdb"
+dap.adapters.gdb = {
+    id = "gdb",
     type = "executable",
-    command = arm_gdb,
-    args = { "--interpreter=mi2" }
+    command = vim.fn.exepath(custom_gdb_dir .. "/gdb"),
+    args = { "--data-directory=" .. custom_gdb_dir .. "/data-directory", "--interpreter=dap" },
 }
 
 dap.configurations.c = {
     {
-        name = "STM32 J-Link",
-        type = "armgdb",
-        request = "launch",
-        program = function()
-            local path = vim.fn.input({
-                prompt = 'Path to executable: ',
-                default = vim.fn.getcwd() .. '/',
-                completion = 'file',
-            })
+        name = "GDB remote (JLink:2331)",
+        type = "gdb",
+        program = getExecutable,
 
-            return (path and path ~= '') and path or dap.ABORT
-        end,
+        request = "attach",
+
+        -- launch settings?
         cwd = "${workspaceFolder}",
-
-        initCommands = {
+        stopOnEntry = false,
+        stopAtBeginningOfMainSubprogram = true,
+        args = {
             "target remote localhost:2331",
-            "monitor reset",
             "load",
+            "break main",
+            "continue",
         },
+
+        -- attach settings?
+        target = "localhost:2331",
     },
     {
         name = 'Cortex Debug Jlink',
@@ -85,44 +130,7 @@ dap.configurations.c = {
         showDevDebugOutput = false,
         cwd = '${workspaceFolder}',
 
-        executable = function()
-            local build_dir = vim.fn.input({
-                prompt = "Build folder: ",
-                default = "build",
-                completion = "dir",
-            })
-
-            if build_dir == nil or build_dir == "" then
-                build_dir = "build"
-            end
-
-            local elfs = vim.fn.glob(build_dir .. "/*.elf", false, true)
-
-            if #elfs == 0 then
-                vim.notify("No ELF files found in " .. build_dir, vim.log.levels.ERROR)
-                return dap.ABORT
-            end
-
-            -- FIX 5: normalize paths (important for debugger stability)
-            for i, path in ipairs(elfs) do
-                elfs[i] = vim.fn.fnamemodify(path, ":p")
-            end
-
-            if #elfs == 1 then
-                return elfs[1]
-            end
-
-            local choices = vim.deepcopy(elfs)
-            table.insert(choices, 1, "Select ELF file:")
-
-            local choice = vim.fn.inputlist(choices)
-
-            if choice <= 0 or choice > #elfs then
-                return dap.ABORT
-            end
-
-            return elfs[choice]
-        end,
+        executable = getExecutable,
     }
 }
 dap.configurations.cpp = dap.configurations.c
