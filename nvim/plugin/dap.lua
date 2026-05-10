@@ -1,23 +1,13 @@
 local dap = require("dap")
 
-require('dap-cortex-debug').setup {
-    debug = false, -- log debug messages
-    -- path to cortex-debug extension, supports vim.fn.glob
-    extension_path = os.getenv("CORTEX_DEBUG_PATH") .. '/share/vscode/extensions/marus25.cortex-debug',
-    lib_extension = nil, -- shared libraries extension, tries auto-detecting, e.g. 'so' on unix
-    node_path = 'node',  -- path to node.js executable
-    dapui_rtt = false,   -- register nvim-dap-ui RTT element
-    dap_vscode_filetypes = { 'c', 'cpp' },
-    -- rtt = {
-    --     buftype = 'Terminal', -- 'Terminal' or 'BufTerminal' for terminal buffer vs normal buffer
-    -- },
-}
-
 local arm_gdb = vim.fn.exepath("arm-none-eabi-gdb")
 local arm_toolchain_path = vim.fn.fnamemodify(arm_gdb, ":h")
 
 local M = {}
 M.cached_device = nil
+M.build_system = nil
+M.build_dir = nil
+
 local function get_device()
     local device = vim.fn.input({
         prompt = "Device: ",
@@ -32,6 +22,20 @@ local function get_device()
     M.cached_device = device
     return device
 end
+
+-------------------------------- DAP settings --------------------------------
+require('dap-cortex-debug').setup {
+    debug = false, -- log debug messages
+    -- path to cortex-debug extension, supports vim.fn.glob
+    extension_path = os.getenv("CORTEX_DEBUG_PATH") .. '/share/vscode/extensions/marus25.cortex-debug',
+    lib_extension = nil, -- shared libraries extension, tries auto-detecting, e.g. 'so' on unix
+    node_path = 'node',  -- path to node.js executable
+    dapui_rtt = false,   -- register nvim-dap-ui RTT element
+    dap_vscode_filetypes = { 'c', 'cpp' },
+    -- rtt = {
+    --     buftype = 'Terminal', -- 'Terminal' or 'BufTerminal' for terminal buffer vs normal buffer
+    -- },
+}
 
 dap.adapters.armgdb = {
     type = "executable",
@@ -67,29 +71,20 @@ dap.configurations.c = {
         request = 'launch',
 
         servertype = 'jlink',
-
         serverpath = vim.fn.exepath("JLinkGDBServerCLExe"),
+
         gdbPath = arm_gdb,
-
-        -- FIX 2: absolute toolchain path (important for Nix)
         toolchainPath = arm_toolchain_path,
-
         toolchainPrefix = 'arm-none-eabi',
+        gdbTarget = 'localhost:2331',
 
-        -- FIX 3: allow override but keep safe default
         device = get_device,
 
         runToEntryPoint = 'main',
-
         swoConfig = { enabled = false },
-
         showDevDebugOutput = false,
-
-        gdbTarget = 'localhost:2331',
-
         cwd = '${workspaceFolder}',
 
-        -- FIX 4: cleaner ELF picker + path normalization
         executable = function()
             local build_dir = vim.fn.input({
                 prompt = "Build folder: ",
@@ -131,8 +126,8 @@ dap.configurations.c = {
     }
 }
 
+-------------------------------- DAP UI --------------------------------
 local dapui = require("dapui")
-
 dapui.setup({
     layouts = {
         -- LEFT: Debug state
@@ -171,6 +166,7 @@ dap.listeners.before.event_exited["dapui_config"] = function()
     dapui.close()
 end
 
+-------------------------------- DAP KEYBINDINGS --------------------------------
 vim.keymap.set("n", "<F5>", dap.continue, { desc = "Debug: Continue" })
 vim.keymap.set("n", "<F6>", dap.step_over, { desc = "Debug: Step Over" })
 vim.keymap.set("n", "<F7>", dap.step_into, { desc = "Debug: Step Into" })
@@ -180,3 +176,61 @@ vim.keymap.set("n", "<leader>dl", dap.run_to_cursor, { desc = "Run to Cursor" })
 vim.keymap.set("n", "<leader>du", function()
     require("dapui").toggle()
 end, { desc = "Toggle DAP UI" })
+
+local function run_in_terminal(cmd)
+    local Terminal = require("toggleterm.terminal").Terminal
+
+    local term = Terminal:new({
+        cmd = cmd,
+        direction = "float",
+        close_on_exit = false,
+        on_open = function(t)
+            vim.api.nvim_buf_set_keymap(t.bufnr, "n", "<Esc>", "<cmd>close<CR>", { noremap = true, silent = true })
+        end,
+    })
+
+    term:toggle()
+end
+
+vim.keymap.set("n", "<C-b>", function()
+    -- 1. build system (cached)
+    if not M.build_system then
+        local choice = vim.fn.input({
+            prompt = "Build system (cmake/meson): ",
+            default = "cmake",
+        })
+
+        if choice == "" then choice = "cmake" end
+
+        if choice ~= "cmake" and choice ~= "meson" then
+            vim.notify("Invalid build system", vim.log.levels.ERROR)
+            return
+        end
+
+        M.build_system = choice
+    end
+
+    -- 2. build dir (cached)
+    if not M.build_dir then
+        local dir = vim.fn.input({
+            prompt = "Build directory: ",
+            default = "build",
+        })
+
+        if dir == "" then dir = "build" end
+        M.build_dir = dir
+    end
+
+    -- 3. build command
+    local cmd
+
+    if M.build_system == "cmake" then
+        cmd = "cmake --build " .. M.build_dir .. " -j"
+    elseif M.build_system == "meson" then
+        cmd = "meson compile -C " .. M.build_dir
+    end
+
+    vim.notify("Building (" .. M.build_system .. ") in " .. M.build_dir)
+
+    run_in_terminal(cmd)
+end, { desc = "Build project (cmake/meson)" })
