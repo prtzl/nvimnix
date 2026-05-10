@@ -23,6 +23,8 @@
             ripgrep
             lua-language-server # lua lsp
             texlab # latex lsp
+            vscode-extensions.marus25.cortex-debug
+            nodejs_24
           ];
 
           # List of Neovim plugins (installed via nixpkgs)
@@ -50,6 +52,10 @@
             vim-fugitive # Git tool
             vim-visual-multi # Multiline select, so good
             toggleterm-nvim
+
+            nvim-dap # debugger
+            nvim-dap-ui # debugger ui
+            nvim-dap-cortex-debug
 
             # LSP stuff
             cmp-buffer
@@ -100,6 +106,7 @@
             text = ''
               # give lazygit config file location
               export LG_CONFIG_FILE="${lazygit-settings-yml}"
+              export CORTEX_DEBUG_PATH="${pkgs.vscode-extensions.marus25.cortex-debug}"
               exec nvim "$@"
             '';
           };
