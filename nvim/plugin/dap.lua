@@ -185,19 +185,38 @@ vim.keymap.set("n", "<leader>du", function()
     require("dapui").toggle()
 end, { desc = "Toggle DAP UI" })
 
+-------------------------------- BUILD HELPER KEYBINDINGS --------------------------------
+local Terminal = require("toggleterm.terminal").Terminal
+local tt = require("toggleterm.terminal")
+
 local function run_in_terminal(cmd)
-    local Terminal = require("toggleterm.terminal").Terminal
+    local term = tt.get(1)
 
-    local term = Terminal:new({
-        cmd = cmd,
-        direction = "float",
-        close_on_exit = false,
-        on_open = function(t)
-            vim.api.nvim_buf_set_keymap(t.bufnr, "n", "<Esc>", "<cmd>close<CR>", { noremap = true, silent = true })
-        end,
-    })
+    if not term then
+        term = Terminal:new({
+            count = 1,
+            direction = "float",
+            close_on_exit = false,
+            start_in_insert = true,
+        })
+    end
 
-    term:toggle()
+    term:open()
+
+    vim.schedule(function()
+        local bufnr = term.bufnr
+        local job_id = vim.b.terminal_job_id
+
+        if bufnr and vim.api.nvim_buf_is_valid(bufnr) and job_id then
+            vim.api.nvim_set_current_buf(bufnr)
+
+            -- 1. clear terminal (real reset of visible output)
+            vim.api.nvim_chan_send(job_id, "clear\n")
+
+            -- 2. run build
+            vim.api.nvim_chan_send(job_id, cmd .. "\n")
+        end
+    end)
 end
 
 vim.keymap.set("n", "<C-b>", function()
