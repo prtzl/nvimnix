@@ -53,9 +53,10 @@
             vim-visual-multi # Multiline select, so good
             toggleterm-nvim
 
-            nvim-dap # debugger
+            nvim-dap # DAP debugger plugin
+            nvim-dap-virtual-text # extra text on request in code
             nvim-dap-ui # debugger ui
-            nvim-dap-cortex-debug
+            nvim-dap-cortex-debug # DAP adapter using cortex-debug VS code plugin
 
             # LSP stuff
             cmp-buffer

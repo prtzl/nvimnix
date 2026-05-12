@@ -174,6 +174,10 @@ dap.listeners.before.event_exited["dapui_config"] = function()
     dapui.close()
 end
 
+-------------------------------- DAP VIRTUAL TEXT --------------------------------
+local dapvt = require("nvim-dap-virtual-text")
+dapvt.setup({})
+
 -------------------------------- DAP KEYBINDINGS --------------------------------
 vim.keymap.set("n", "<F5>", dap.continue, { desc = "Debug: Continue" })
 vim.keymap.set("n", "<F6>", dap.step_over, { desc = "Debug: Step Over" })
