@@ -14,44 +14,53 @@
         let
           # tools/pacakges required by neovim plugins to operate
           commonPackages = with pkgs; [
+            lazygit
             bat
             git
-            lazygit
-            nil # nix lsp
             nixfmt
-            python313Packages.python-lsp-server # python lsp
             ripgrep
+
+            # LSP
+            nil # nix lsp
+            python313Packages.python-lsp-server # python lsp
             lua-language-server # lua lsp
             texlab # latex lsp
+
+            # cortex-debug pluggin and support
             vscode-extensions.marus25.cortex-debug
             nodejs_24
           ];
 
           # List of Neovim plugins (installed via nixpkgs)
           neovimPlugins = with pkgs.vimPlugins; [
+            # visual
             base16-nvim # color schemes
+            indentLine # Show indentation levels
+            nvim-web-devicons # icons
+            rainbow-delimiters-nvim # explains it
+            vim-cpp-enhanced-highlight # better looking cpp highlighting
+
+            #function
             comment-nvim # smart comments
             git-worktree-nvim # telescope extension for git worktree
             gitsigns-nvim # git gutter
-            indentLine # Show indentation levels
             lazygit-nvim # Another git tool
             lualine-nvim # status bar
             markdown-preview-nvim # opens markdown preview in browser
             mini-surround # put a symbol around a word
             nvim-autopairs # autopair braces
             nvim-tree-lua # file tree
+            toggleterm-nvim
+            vim-asterisk # More options on *
+            vim-fugitive # Git tool
+            vim-visual-multi # Multiline select, so good
+
             nvim-treesitter-legacy
             nvim-treesitter-legacy.withAllGrammars # syntax for everything
-            nvim-web-devicons # icons
-            rainbow-delimiters-nvim # explains it
+
             telescope-frecency-nvim # Telescope plugin for searching most used files
             telescope-fzf-native-nvim # Telescope plugin with native C fzf (faster search)
             telescope-nvim # Fuzzy search everything
-            vim-asterisk # More options on *
-            vim-cpp-enhanced-highlight # better looking cpp highlighting
-            vim-fugitive # Git tool
-            vim-visual-multi # Multiline select, so good
-            toggleterm-nvim
 
             nvim-dap # DAP debugger plugin
             nvim-dap-virtual-text # extra text on request in code
@@ -71,28 +80,29 @@
             lspkind-nvim
             luasnip
             nvim-cmp
-            nvim-dap
-            nvim-dap-ui
-            nvim-lspconfig
             plenary-nvim
           ];
 
-          # Generate neovim config structure
-          myNeovimConfig = pkgs.neovimUtils.makeNeovimConfig {
-            plugins = neovimPlugins;
-            customRC = ''
-              set runtimepath+=${./nvim}
-              if filereadable(expand("${./nvim/init.vim}"))
-                source ${./nvim/init.vim}
-              endif
-              if filereadable(expand("${./nvim/init.lua}"))
-                source ${./nvim/init.lua}
-              endif
-            '';
-          };
-
           # new neovim with my settings, BUT relies on env to provide "commonPackages"!
-          myNeovim = pkgs.wrapNeovimUnstable pkgs.neovim-unwrapped myNeovimConfig;
+          myNeovim = pkgs.wrapNeovimUnstable pkgs.neovim-unwrapped {
+            configure = {
+              packages.myPlugins = {
+                start = neovimPlugins;
+              };
+
+              customRC = ''
+                set runtimepath+=${./nvim}
+
+                if filereadable(expand("${./nvim/init.vim}"))
+                  source ${./nvim/init.vim}
+                endif
+
+                if filereadable(expand("${./nvim/init.lua}"))
+                  source ${./nvim/init.lua}
+                endif
+              '';
+            };
+          };
 
           # Actual lazygit config file
           lazygit-settings-yml = pkgs.writeText "lazygit-config.yml" "${pkgs.lib.generators.toYAML { }
