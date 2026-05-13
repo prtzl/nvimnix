@@ -1,10 +1,6 @@
 local dap = require("dap")
-dap.set_log_level('DEBUG')
-print(vim.fn.stdpath('cache'))
 
-local arm_gdb = vim.fn.exepath("arm-none-eabi-gdb")
-local arm_toolchain_path = vim.fn.fnamemodify(arm_gdb, ":h")
-
+-- HELPERS FOR GETTING DEVICE NAME AND EXECUTABLE (DIR) and caching choices
 local M = {}
 M.cached_device = nil
 M.build_system = nil
@@ -43,7 +39,6 @@ local function getExecutable()
         return dap.ABORT
     end
 
-    -- FIX 5: normalize paths (important for debugger stability)
     for i, path in ipairs(elfs) do
         elfs[i] = vim.fn.fnamemodify(path, ":p")
     end
@@ -64,6 +59,21 @@ local function getExecutable()
     return elfs[choice]
 end
 
+local function getExe()
+    local elf = vim.fn.input({
+        prompt = "Executable path:",
+        default = "",
+        completion = "dir",
+    })
+
+    if #elf == 0 then
+        vim.notify("No ELF provided", vim.log.levels.ERROR)
+        return dap.ABORT
+    end
+
+    return elf
+end
+
 -------------------------------- DAP settings --------------------------------
 require('dap-cortex-debug').setup {
     debug = false, -- log debug messages
@@ -78,20 +88,138 @@ require('dap-cortex-debug').setup {
     -- },
 }
 
-local home = os.getenv("HOME")
--- local custom_gdb_dir = home .. "/projects/testing/arm-toolchain/arm-gnu-toolchain-15.2.rel1/binutils-gdb/gdb"
-local custom_gdb_dir = home .. "/projects/git/binutils-gdb/gdb"
+-- INFO: expand workspaceFolder and workspaceRoot with cwd for cortex-debug launch.json
+local vscode = require("dap.ext.vscode")
+local function expand_vars(obj)
+    if type(obj) == "table" then
+        local res = {}
+        for k, v in pairs(obj) do
+            res[k] = expand_vars(v)
+        end
+        return res
+    elseif type(obj) == "string" then
+        local cwd = vim.fn.getcwd()
+
+        obj = obj:gsub("${workspaceFolder}", cwd)
+        obj = obj:gsub("${workspaceRoot}", cwd)
+
+        return obj
+    end
+
+    return obj
+end
+
+local orig = vscode.load_launchjs
+vscode.load_launchjs = function(path, type_to_filetypes)
+    orig(path, type_to_filetypes)
+
+    for _, configs in pairs(dap.configurations) do
+        for i, config in ipairs(configs) do
+            configs[i] = expand_vars(config)
+        end
+    end
+end
+
+-- ARM GDB ADAPTER
+local cwd = vim.fn.getcwd()
+local arm_gdb_exe = "arm-none-eabi-gdb"
+
+local arm_gdb_from_env = os.getenv("ARM_GDB_PATH")
+local arm_gdb_from_file = nil
+local arm_gdb_path_file = cwd .. "/.arm_gdb_path"
+
+-- check if env var is dir path or not, assume executable
+if arm_gdb_from_env then
+    if vim.fn.isdirectory(arm_gdb_from_env) then
+        arm_gdb_from_env = arm_gdb_from_env .. "/" .. arm_gdb_exe
+    end
+end
+
+-- read .arm_gdb_path and figure out if string is bin dir or assume executable
+local fd = io.open(arm_gdb_path_file, "r")
+if fd then
+    local line = fd:read("*l")
+    fd:close()
+
+    if line and line ~= "" then
+        -- Trim whitespace
+        line = line:gsub("^%s+", ""):gsub("%s+$", "")
+
+        -- If it's a directory, append executable name
+        if vim.fn.isdirectory(line) then
+            arm_gdb_from_file = line .. "/" .. arm_gdb_exe
+        else
+            arm_gdb_from_file = line
+        end
+    end
+end
+
+-- define arm executable in order: env var -> dotfile -> full path -> just exe name
+local arm_gdb =
+    arm_gdb_from_env
+    or arm_gdb_from_file
+    or vim.fn.exepath(arm_gdb_exe)
+    or arm_gdb_exe
+local arm_toolchain_path = vim.fn.fnamemodify(arm_gdb, ":h")
+
+print("Armm GDB:", arm_gdb)
+print("ARM GDB TOOLCHAIN:", arm_toolchain_path)
+
+dap.adapters.armgdb = {
+    id = "gdb",
+    type = "executable",
+    command = arm_gdb,
+    args = { "--quiet", "--interpreter=dap" },
+}
+
+-- NATIVE GDB ADAPTER
 dap.adapters.gdb = {
     id = "gdb",
     type = "executable",
-    command = vim.fn.exepath(custom_gdb_dir .. "/gdb"),
-    args = { "--data-directory=" .. custom_gdb_dir .. "/data-directory", "--interpreter=dap" },
+    command = vim.fn.exepath("gdb"),
+    args = { "--quiet", "--interpreter=dap" },
 }
 
+-- DAP CONFIGURATIONS
 dap.configurations.c = {
     {
-        name = "GDB remote (JLink:2331)",
-        type = "gdb",
+        name = "cortex-debug generic (launch)",
+        type = "cortex-debug",
+        cwd = "${workspaceFolder}",
+
+        request = "launch",
+
+        servertype = "jlink",
+        serverpath = vim.fn.exepath("JLinkGDBServerCLExe"),
+
+        device = get_device,
+        executable = getExecutable,
+
+        runToEntryPoint = "main",
+
+        gdbPath = arm_gdb,
+        toolchainPath = arm_toolchain_path,
+        toolchainPrefix = "arm-none-eabi",
+    },
+    {
+        name = "Cortex Debug stlink",
+        type = "cortex-debug",
+        cwd = "${workspaceFolder}",
+        request = "launch",
+
+        servertype = "stutil",
+
+        device = get_device,
+        executable = getExecutable,
+        runToEntryPoint = "main",
+
+        gdbPath = arm_gdb,
+        toolchainPath = arm_toolchain_path,
+        toolchainPrefix = "arm-none-eabi",
+    },
+    {
+        name = "arm-none-eabi-gdb (attach)",
+        type = "armgdb",
         program = getExecutable,
 
         request = "attach",
@@ -111,26 +239,38 @@ dap.configurations.c = {
         target = "localhost:2331",
     },
     {
-        name = 'Cortex Debug Jlink',
-        type = 'cortex-debug',
-        request = 'launch',
+        name = "arm-none-eabi-gdb (launch)",
+        type = "armgdb",
+        program = getExecutable,
 
-        servertype = 'jlink',
-        serverpath = vim.fn.exepath("JLinkGDBServerCLExe"),
+        request = "launch",
 
-        gdbPath = arm_gdb,
-        toolchainPath = arm_toolchain_path,
-        toolchainPrefix = 'arm-none-eabi',
-        gdbTarget = 'localhost:2331',
+        -- launch settings?
+        cwd = "${workspaceFolder}",
+        stopOnEntry = false,
+        stopAtBeginningOfMainSubprogram = true,
+        args = {
+            "target remote localhost:2331",
+            "load",
+            "break main",
+            "continue",
+        },
 
-        device = get_device,
+        -- attach settings?
+        target = "localhost:2331",
+    },
+    {
+        name = "gdb native (launch)",
+        type = "gdb",
+        program = getExe,
 
-        runToEntryPoint = 'main',
-        swoConfig = { enabled = false },
-        showDevDebugOutput = false,
-        cwd = '${workspaceFolder}',
+        request = "launch",
 
-        executable = getExecutable,
+        -- launch settings?
+        cwd = "${workspaceFolder}",
+        stopOnEntry = false,
+        stopAtBeginningOfMainSubprogram = true,
+        args = {},
     }
 }
 dap.configurations.cpp = dap.configurations.c
