@@ -9,28 +9,29 @@
   outputs =
     inputs@{ nixpkgs, flake-parts, ... }:
     let
+      # tools/pacakges required by neovim plugins to operate
+      neovimCommnonPackages =
+        pkgs: with pkgs; [
+          lazygit
+          bat
+          git
+          nixfmt
+          ripgrep
+
+          # LSP
+          nil # nix lsp
+          python313Packages.python-lsp-server # python lsp
+          lua-language-server # lua lsp
+          texlab # latex lsp
+
+          # cortex-debug pluggin and support
+          vscode-extensions.marus25.cortex-debug
+          nodejs_24
+        ];
       makeNeovim =
         pkgs:
         let
-          # tools/pacakges required by neovim plugins to operate
-          commonPackages = with pkgs; [
-            lazygit
-            bat
-            git
-            nixfmt
-            ripgrep
-
-            # LSP
-            nil # nix lsp
-            python313Packages.python-lsp-server # python lsp
-            lua-language-server # lua lsp
-            texlab # latex lsp
-
-            # cortex-debug pluggin and support
-            vscode-extensions.marus25.cortex-debug
-            nodejs_24
-          ];
-
+          commonPackages = neovimCommnonPackages pkgs;
           # List of Neovim plugins (installed via nixpkgs)
           neovimPlugins = with pkgs.vimPlugins; [
             # visual
@@ -214,12 +215,13 @@
         let
           pkgs = nixpkgs.legacyPackages.${system};
           neovim = makeNeovim pkgs;
+          commonPackages = neovimCommnonPackages pkgs;
         in
         {
           formatter = pkgs.nixfmt-tree;
           packages.default = neovim;
           devShells.default = pkgs.mkShellNoCC {
-            nativeBuildInputs = [ neovim ];
+            nativeBuildInputs = commonPackages;
           };
         };
     };
