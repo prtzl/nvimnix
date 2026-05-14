@@ -213,13 +213,15 @@
       perSystem =
         { pkgs, system, ... }:
         let
-          pkgs = nixpkgs.legacyPackages.${system};
-          neovim = makeNeovim pkgs;
+          nvim = makeNeovim pkgs;
           commonPackages = neovimCommnonPackages pkgs;
         in
         {
           formatter = pkgs.nixfmt-tree;
-          packages.default = neovim;
+          packages = rec {
+            default = neovim;
+            neovim = nvim;
+          };
           devShells.default = pkgs.mkShellNoCC {
             nativeBuildInputs = commonPackages;
           };
