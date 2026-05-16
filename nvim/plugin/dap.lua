@@ -76,12 +76,12 @@ end
 
 -------------------------------- DAP settings --------------------------------
 require('dap-cortex-debug').setup {
-  debug = false,   -- log debug messages
+  debug = false, -- log debug messages
   -- path to cortex-debug extension, supports vim.fn.glob
   extension_path = os.getenv("CORTEX_DEBUG_PATH") .. '/share/vscode/extensions/marus25.cortex-debug',
-  lib_extension = nil,   -- shared libraries extension, tries auto-detecting, e.g. 'so' on unix
-  node_path = 'node',    -- path to node.js executable
-  dapui_rtt = false,     -- register nvim-dap-ui RTT element
+  lib_extension = nil, -- shared libraries extension, tries auto-detecting, e.g. 'so' on unix
+  node_path = 'node',  -- path to node.js executable
+  dapui_rtt = false,   -- register nvim-dap-ui RTT element
   dap_vscode_filetypes = { 'c', 'cpp' },
   -- rtt = {
   --     buftype = 'Terminal', -- 'Terminal' or 'BufTerminal' for terminal buffer vs normal buffer

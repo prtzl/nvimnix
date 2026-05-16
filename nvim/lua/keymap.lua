@@ -14,6 +14,10 @@ map("i", "<s-down>", "<ESC>:move+1<CR><ins><RIGHT>")
 map("v", "<s-up>", ":move '<-2<CR>gv=gv")
 map("v", "<s-down>", ":move '>+1<CR>gv=gv")
 
+-- Going up and down, aligned to center
+map("n", "<c-u>", "<c-u>zz")
+map("n", "<c-d>", "<c-d>zz")
+
 -- Resizing windows
 map("n", "<C-s-up>", ":resize +5<CR>")
 map("n", "<C-s-down>", ":resize -5<CR>")
