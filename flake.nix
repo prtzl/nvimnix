@@ -99,6 +99,7 @@
             lspkind-nvim
             luasnip
             nvim-cmp
+            nvim-lspconfig
             plenary-nvim
           ];
 
