@@ -1,5 +1,4 @@
--- This shit has to be set so that the completion menu (possibly more) is colored
-vim.cmd 'set termguicolors'
+vim.opt.termguicolors = true -- Enable 24-bit colors
 
 -- Color mode
 vim.o.background = "dark"
@@ -20,6 +19,9 @@ vim.cmd('colorscheme base16-da-one-ocean')
 -- Override background to inherit terminal one
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" }) -- don't change bg color when switching to inactive windows
+
+vim.api.nvim_set_hl(0, "CursorLineNr", { bg = "none", bold = true })
+vim.api.nvim_set_hl(0, "LineNr", { bg = "none", fg = "#777777" })
 
 -- Transparent complete
 vim.api.nvim_set_hl(0, "CmpItemAbbr", { cternbg = nil, bg = nil })
@@ -57,3 +59,16 @@ vim.api.nvim_set_hl(0, 'GitSignsDeleteLn', { bg = '#2e1a1a' })
 vim.api.nvim_set_hl(0, 'GitSignsAddInline', { bg = '#3a5c3a', fg = '#a6e3a1' })
 vim.api.nvim_set_hl(0, 'GitSignsChangeInline', { bg = '#5c523a', fg = '#f9e2af' })
 vim.api.nvim_set_hl(0, 'GitSignsDeleteInline', { bg = '#5c3a3a', fg = '#f38ba8' })
+
+-- vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "FloatBorder", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "StatusLine", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "TabLine", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "TabLineFill", { bg = "none", fg = "#767676" })
+-- vim.api.nvim_set_hl(0, "TabLineSel", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "ColorColumn", { bg = "none" })
