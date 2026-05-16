@@ -9,6 +9,22 @@
   outputs =
     inputs@{ nixpkgs, flake-parts, ... }:
     let
+      # Lazygit config to be fed on each start (not global :)
+      lazygit-settings = {
+        git = {
+          autoFetch = false;
+        };
+        gui = {
+          theme = {
+            selectedLineBgColor = [ "#3b3c4d" ];
+            selectedLineFgColor = [ "#ffffff" ];
+            activeBorderColor = [ "#89b4fa" ];
+            inactiveBorderColor = [ "#6c7086" ];
+            optionsTextColor = [ "#89b4fa" ];
+          };
+        };
+      };
+
       # tools/pacakges required by neovim plugins to operate
       neovimCommnonPackages =
         pkgs: with pkgs; [
@@ -28,10 +44,12 @@
           vscode-extensions.marus25.cortex-debug
           nodejs_24
         ];
+
       makeNeovim =
         pkgs:
         let
           commonPackages = neovimCommnonPackages pkgs;
+
           # List of Neovim plugins (installed via nixpkgs)
           neovimPlugins = with pkgs.vimPlugins; [
             # visual
@@ -106,35 +124,20 @@
           }";
 
           # I need to wrap my neovim in shell script so that common packages needed at runtime are available
-          # Also useful to give lazygit config file with a path
-          wrappedNeovim = pkgs.writeShellApplication {
+          # Also a way to inject env vars to it
+          wrappedNeovim = pkgs.symlinkJoin {
             name = "nvim";
-            runtimeInputs = [ myNeovim ] ++ commonPackages;
-            text = ''
-              # give lazygit config file location
-              export LG_CONFIG_FILE="${lazygit-settings-yml}"
-              export CORTEX_DEBUG_PATH="${pkgs.vscode-extensions.marus25.cortex-debug}"
-              exec ${myNeovim}/bin/nvim "$@"
+            paths = [ myNeovim ] ++ commonPackages;
+            buildInputs = [ pkgs.makeWrapper ];
+            postBuild = ''
+              wrapProgram $out/bin/nvim \
+                --prefix PATH : ${pkgs.lib.makeBinPath commonPackages} \
+                --set LG_CONFIG_FILE "${lazygit-settings-yml}" \
+                --set CORTEX_DEBUG_PATH "${pkgs.vscode-extensions.marus25.cortex-debug}"
             '';
           };
         in
         wrappedNeovim;
-
-      # Lazygit config to be fed on each start (not global :)
-      lazygit-settings = {
-        git = {
-          autoFetch = false;
-        };
-        gui = {
-          theme = {
-            selectedLineBgColor = [ "#3b3c4d" ];
-            selectedLineFgColor = [ "#ffffff" ];
-            activeBorderColor = [ "#89b4fa" ];
-            inactiveBorderColor = [ "#6c7086" ];
-            optionsTextColor = [ "#89b4fa" ];
-          };
-        };
-      };
 
       makeModule =
         moduleType:
