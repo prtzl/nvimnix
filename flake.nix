@@ -86,23 +86,18 @@
 
           # new neovim with my settings, BUT relies on env to provide "commonPackages"!
           myNeovim = pkgs.wrapNeovimUnstable pkgs.neovim-unwrapped {
-            configure = {
-              packages.myPlugins = {
-                start = neovimPlugins;
-              };
+            plugins = neovimPlugins;
+            neovimRcContent = ''
+              set runtimepath+=${./nvim}
 
-              customRC = ''
-                set runtimepath+=${./nvim}
+              if filereadable(expand("${./nvim/init.vim}"))
+                source ${./nvim/init.vim}
+              endif
 
-                if filereadable(expand("${./nvim/init.vim}"))
-                  source ${./nvim/init.vim}
-                endif
-
-                if filereadable(expand("${./nvim/init.lua}"))
-                  source ${./nvim/init.lua}
-                endif
-              '';
-            };
+              if filereadable(expand("${./nvim/init.lua}"))
+                source ${./nvim/init.lua}
+              endif
+            '';
           };
 
           # Actual lazygit config file
@@ -114,12 +109,12 @@
           # Also useful to give lazygit config file with a path
           wrappedNeovim = pkgs.writeShellApplication {
             name = "nvim";
-            runtimeInputs = commonPackages ++ [ myNeovim ];
+            runtimeInputs = [ myNeovim ] ++ commonPackages;
             text = ''
               # give lazygit config file location
               export LG_CONFIG_FILE="${lazygit-settings-yml}"
               export CORTEX_DEBUG_PATH="${pkgs.vscode-extensions.marus25.cortex-debug}"
-              exec nvim "$@"
+              exec ${myNeovim}/bin/nvim "$@"
             '';
           };
         in
