@@ -86,6 +86,8 @@ vim.g.cpp_member_variable_highlight = 1
 -- https://github.com/srid/emanote/issues/180
 vim.opt.backupcopy = 'yes'
 
+vim.opt.guicursor =
+"n-v-c:block,i-ci-ve:block,r-cr:hor20,o:hor50,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor,sm:block-blinkwait175-blinkoff150-blinkon175"
 vim.opt.cmdheight = 1                             -- Command line height
 vim.opt.completeopt = "menuone,noinsert,noselect" -- Completion options
 vim.opt.concealcursor = ""                        -- Don't hide cursor line markup
@@ -95,20 +97,17 @@ vim.opt.fillchars = { eob = " " }                 -- Hide ~ on empty lines
 vim.opt.foldexpr = "nvim_treesitter#foldexpr()"   -- Use treesitter for folding
 vim.opt.foldlevel = 99                            -- Start with all folds open
 vim.opt.foldmethod = "expr"                       -- Use expression for folding
-vim.opt.guicursor =
-"n-v-c:block,i-ci-ve:block,r-cr:hor20,o:hor50,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor,sm:block-blinkwait175-blinkoff150-blinkon175"
-vim.opt.hidden = true           -- Allow hidden buffers
-vim.opt.iskeyword:append("-")   -- Treat dash as part of word
-vim.opt.lazyredraw = true       -- Don't redraw during macros
-vim.opt.matchtime = 2           -- How long to show matching bracket
-vim.opt.modifiable = true       -- Allow buffer modifications
-vim.opt.path:append("**")       -- include subdirectories in search
-vim.opt.pumblend = 10           -- Popup menu transparency
-vim.opt.pumheight = 10          -- Popup menu height
-vim.opt.pumheight = 10          -- cap height for popup windows at 10 lines
-vim.opt.selection = "exclusive" -- Selection behavior
-vim.opt.showmode = false        -- Don't show mode in command line
-vim.opt.signcolumn = "yes"      -- Always show sign column
-vim.opt.synmaxcol = 300         -- Syntax highlighting limit
-vim.opt.updatetime = 300        -- Faster completion
-vim.opt.winblend = 0            -- Floating window transparency
+vim.opt.hidden = true                             -- Allow hidden buffers
+vim.opt.iskeyword:append("-")                     -- Treat dash as part of word
+vim.opt.lazyredraw = true                         -- Don't redraw during macros
+vim.opt.matchtime = 2                             -- How long to show matching bracket
+vim.opt.modifiable = true                         -- Allow buffer modifications
+vim.opt.path:append("**")                         -- include subdirectories in search
+vim.opt.pumblend = 10                             -- Popup menu transparency
+vim.opt.pumheight = 10                            -- Popup menu height
+vim.opt.pumheight = 10                            -- cap height for popup windows at 10 lines
+vim.opt.selection = "exclusive"                   -- Selection behavior
+vim.opt.signcolumn = "yes"                        -- Always show sign column
+vim.opt.synmaxcol = 300                           -- Syntax highlighting limit
+vim.opt.updatetime = 300                          -- Faster completion
+vim.opt.winblend = 0                              -- Floating window transparency
