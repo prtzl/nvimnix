@@ -104,5 +104,4 @@ vim.opt.pumblend = 10                             -- Popup menu transparency
 vim.opt.pumheight = 10                            -- cap height for popup windows at 10 lines
 vim.opt.signcolumn = "yes"                        -- Always show sign column
 vim.opt.synmaxcol = 300                           -- Syntax highlighting limit
-vim.opt.updatetime = 300                          -- Faster completion
 vim.opt.winblend = 0                              -- Floating window transparency
