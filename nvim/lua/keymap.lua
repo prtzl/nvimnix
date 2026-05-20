@@ -31,6 +31,10 @@ map("!", "<C-h>", "<c-w>")
 -- Sort selected lines
 map("v", "<LEADER>ts", ":sort<CR>")
 
+-- Remap W to w for mistakes
+vim.api.nvim_create_user_command('W', 'w', {})
+vim.api.nvim_create_user_command('Q', 'q', {})
+
 -------------------------------------------------------------------------------
 -- PLUGINS and PLUGIN-RELATED actions
 -- Plugins that don't have or need local file (config) can have their keymaps here (or vim plugins)

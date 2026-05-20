@@ -109,10 +109,6 @@
             neovimRcContent = ''
               set runtimepath+=${./nvim}
 
-              if filereadable(expand("${./nvim/init.vim}"))
-                source ${./nvim/init.vim}
-              endif
-
               if filereadable(expand("${./nvim/init.lua}"))
                 source ${./nvim/init.lua}
               endif
