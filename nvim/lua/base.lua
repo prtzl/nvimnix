@@ -96,7 +96,6 @@ vim.opt.foldlevel = 99                            -- Start with all folds open
 vim.opt.foldmethod = "expr"                       -- Use expression for folding
 vim.opt.hidden = true                             -- Allow hidden buffers
 vim.opt.iskeyword:append("-")                     -- Treat dash as part of word
-vim.opt.lazyredraw = true                         -- Don't redraw during macros
 vim.opt.matchtime = 2                             -- How long to show matching bracket
 vim.opt.modifiable = true                         -- Allow buffer modifications
 vim.opt.path:append("**")                         -- include subdirectories in search
