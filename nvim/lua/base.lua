@@ -91,7 +91,7 @@ vim.opt.concealcursor = ""                        -- Don't hide cursor line mark
 vim.opt.conceallevel = 0                          -- Don't hide markup
 vim.opt.errorbells = false                        -- No error bells
 vim.opt.fillchars = { eob = " " }                 -- Hide ~ on empty lines
-vim.opt.foldexpr = "nvim_treesitter#foldexpr()"   -- Use treesitter for folding
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.opt.foldlevel = 99                            -- Start with all folds open
 vim.opt.foldmethod = "expr"                       -- Use expression for folding
 vim.opt.hidden = true                             -- Allow hidden buffers
