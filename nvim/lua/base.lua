@@ -70,12 +70,9 @@ vim.opt.backspace = { 'indent', 'eol', 'start' }
 
 -- Grep
 if vim.fn.executable("rg") then
-    vim.opt.grepprg = "rg --vimgrep --no-heading"
-    vim.opt.grepformat = "%f:%l:%c:%m,%f:%l:%m"
+  vim.opt.grepprg = "rg --vimgrep --no-heading"
+  vim.opt.grepformat = "%f:%l:%c:%m,%f:%l:%m"
 end
-
--- Set floating window dimensions
-vim.opt.pumheight = 10 -- cap height for popup windows at 10 lines
 
 -- Improved cpp
 vim.g.cpp_class_decl_highlight = 1
@@ -104,7 +101,6 @@ vim.opt.matchtime = 2                             -- How long to show matching b
 vim.opt.modifiable = true                         -- Allow buffer modifications
 vim.opt.path:append("**")                         -- include subdirectories in search
 vim.opt.pumblend = 10                             -- Popup menu transparency
-vim.opt.pumheight = 10                            -- Popup menu height
 vim.opt.pumheight = 10                            -- cap height for popup windows at 10 lines
 vim.opt.signcolumn = "yes"                        -- Always show sign column
 vim.opt.synmaxcol = 300                           -- Syntax highlighting limit
