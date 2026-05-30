@@ -54,7 +54,7 @@
           neovimPlugins = with pkgs.vimPlugins; [
             # visual
             base16-nvim # color schemes
-            indentLine # Show indentation levels
+            indent-blankline-nvim # Show indentation levels
             nvim-web-devicons # icons
             rainbow-delimiters-nvim # explains it
             vim-cpp-enhanced-highlight # better looking cpp highlighting
