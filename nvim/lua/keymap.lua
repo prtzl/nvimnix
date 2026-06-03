@@ -35,6 +35,17 @@ map("v", "<LEADER>ts", ":sort<CR>")
 vim.api.nvim_create_user_command('W', 'w', {})
 vim.api.nvim_create_user_command('Q', 'q', {})
 
+-- Copy current buffer/file relative or absolute path
+map('n', '<leader>cp', function()
+  vim.fn.setreg('+', vim.fn.expand('%'))
+  vim.notify('Copied: ' .. vim.fn.expand('%'))
+end, { desc = 'Copy relative path' })
+
+map('n', '<leader>cP', function()
+  vim.fn.setreg('+', vim.fn.expand('%:p'))
+  vim.notify('Copied: ' .. vim.fn.expand('%:p'))
+end, { desc = 'Copy absolute path' })
+
 -------------------------------------------------------------------------------
 -- PLUGINS and PLUGIN-RELATED actions
 -- Plugins that don't have or need local file (config) can have their keymaps here (or vim plugins)
