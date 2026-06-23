@@ -286,10 +286,12 @@ vim.lsp.config('pylsp',
   })
 
 -- lua LSP
-vim.lsp.enable('lua_ls')
-vim.lsp.config('lua_ls',
+vim.lsp.enable('luals')
+vim.lsp.config('luals',
   {
-    autostart = true,
+    cmd = { 'lua-language-server' },
+    filetypes = { 'lua' },
+    root_markers = { { '.luarc.json', '.luarc.jsonc' }, '.git' },
     capabilities = capabilities,
     settings = {
       Lua = {
