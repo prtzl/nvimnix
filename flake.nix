@@ -125,7 +125,7 @@
           # Also a way to inject env vars to it
           wrappedNeovim = pkgs.symlinkJoin {
             name = "nvim";
-            paths = [ myNeovim ] ++ commonPackages;
+            paths = [ myNeovim ];
             buildInputs = [ pkgs.makeWrapper ];
             postBuild = ''
               wrapProgram $out/bin/nvim \
